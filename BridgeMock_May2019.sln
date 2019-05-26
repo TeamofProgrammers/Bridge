@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BridgeMock_May2019", "BridgeMock_May2019\BridgeMock_May2019.csproj", "{FA431C11-BF78-46ED-BF22-58F1CBE82886}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA431C11-BF78-46ED-BF22-58F1CBE82886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA431C11-BF78-46ED-BF22-58F1CBE82886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA431C11-BF78-46ED-BF22-58F1CBE82886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA431C11-BF78-46ED-BF22-58F1CBE82886}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B1F9F37A-2753-4825-89CD-22F158192E39}
+	EndGlobalSection
+EndGlobal
