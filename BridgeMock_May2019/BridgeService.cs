@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Net.Sockets;
-using System.Net;
+
 
 namespace BridgeMock_May2019
 {
+    class BridgeUser
+    {
+        public string UID { get; set; }
+        public string Nick { get; set; }
+        public string UserName { get; set; }
+    }
     class BridgeService
     {
         private string _ServerHost;
@@ -21,6 +25,7 @@ namespace BridgeMock_May2019
         static Action<string> InputLog;
         static Action<string> OutputLog;
         private string _ServerIdentifier;
+        private List<BridgeUser> _BridgeUsers;
 
         private static Random r = new Random();
         public BridgeService(string ServerHost, int ServerPort, string ServerPassword, Action<string> inputLog, Action<string> outputLog)
@@ -31,6 +36,7 @@ namespace BridgeMock_May2019
             this._ServerIdentifier = "00B";
             InputLog = inputLog;
             OutputLog = outputLog;
+            _BridgeUsers = new List<BridgeUser>();
         }
 
         public static string RandomString(int length)
@@ -60,19 +66,33 @@ namespace BridgeMock_May2019
             // CloakedIP // right now i'm just sending a random string but it should look like 
             // Real IP address // This is the ip address, you can use *
             // : realname   // RealName appears after the colon, because this can have spaces in it.
-            int hopcount = 0;
-            int timestamp = 0;
-            string username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
-            string hostname = "discordBot";
-            string uid = RandomString(9); // *MAJOR HACK* Need to track this
-            int serviceStamp = 0;
-            string userMode = "+iwx";
-            string vhost = "*";
-            string ipCloak = "bcloaked"; // bridge cloak
-            string ipAddress = "*";
-            string mstr = $":{_ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
+            nick = nick.Trim();
+            var query = _BridgeUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
+            if(query.ToList().Count == 0)
+            {
+                int hopcount = 0;
+                int timestamp = 0;
+                string username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
+                string hostname = "discordBot";
+                string uid = RandomString(9); // *MAJOR HACK* Need to track this
+                int serviceStamp = 0;
+                string userMode = "+iwx";
+                string vhost = "*";
+                string ipCloak = "bcloaked"; // bridge cloak
+                string ipAddress = "*";
+                string mstr = $":{_ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
 
-            write(mstr);
+                write(mstr);
+                var bridgeUser = new BridgeUser();
+                bridgeUser.UID = uid;
+                bridgeUser.UserName = username;
+                bridgeUser.Nick = nick;
+                _BridgeUsers.Add(bridgeUser);
+            }
+            else
+            {
+                OutputLog($"Error: {nick} is already registered ");
+            }
 
         }
         public void JoinChannel(string nick, string channel)
@@ -92,7 +112,7 @@ namespace BridgeMock_May2019
         public void Action(string nick, string action, string channel = "#TOP")
         {
             // example  :shiftybit PRIVMSG #TOP :ACTION flips a table
-            //string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
+            // string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
             char c1 = (char)1; // control char 1
             string mstr = $":{nick} PRIVMSG {channel} :{c1}ACTION {action}{c1}"; 
             write(mstr);
