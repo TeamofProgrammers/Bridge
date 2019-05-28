@@ -20,6 +20,7 @@ namespace BridgeMock_May2019
         private StreamWriter writer;
         static Action<string> InputLog;
         static Action<string> OutputLog;
+        private string _ServerIdentifier;
 
         private static Random r = new Random();
         public BridgeService(string ServerHost, int ServerPort, string ServerPassword, Action<string> inputLog, Action<string> outputLog)
@@ -27,6 +28,7 @@ namespace BridgeMock_May2019
             this._ServerHost = ServerHost;
             this._ServerPort = ServerPort;
             this._ServerPassword = ServerPassword;
+            this._ServerIdentifier = "00B";
             InputLog = inputLog;
             OutputLog = outputLog;
         }
@@ -41,21 +43,35 @@ namespace BridgeMock_May2019
         {
             // example
             // :00B UID darkscrypt_0 0 0 darkscrypt_3583 discord 00B780369 0 +iw-x * BRIDGE * :darkscrypt
-            string mstr = "";
-            mstr += ":00B ";  // Server Identifier
-            mstr += "UID "; // UID Command https://www.unrealircd.org/docs/Server_protocol:UID_command
-            mstr += nick + " "; // nickname
-            mstr += "0 "; // Hop Count
-            mstr += "0 "; // timestamp when user came online
-            mstr += nick + "_"+ r.Next(1000, 9999).ToString() + " " ; // username *HACK*
-            mstr += "discordBot "; // hostname
-            mstr += RandomString(9) + " "; // user UID. Currently 9 character random alphanumeric  *HACK*
-            mstr += "0 "; // service stamp (i guess when recognized by services??)
-            mstr += "+iw-x "; // user modes
-            mstr += "* "; // VHOST. * if blank
-            mstr += "BridgeCloak "; // this should be the cloak, but we can use this hacky thing for now
-            mstr += "* "; // This is the ip address, apparently * works too based on tcpdump output i've seen
-            mstr += ":" + nick; // this is the real name, can have spaces. used in last
+            // 
+
+            //Format : Space seperated parameters
+            // :ServerIdentifier  
+            // UID    // UID Command https://www.unrealircd.org/docs/Server_protocol:UID_command
+            // nickname
+            // int Hop Count
+            // int timestamp when user came online. (need to determine format of this, is it epoch?)
+            // username *HACK*
+            // hostname
+            // userUID  // Currently 9 character random alphanumeric  *HACK*
+            // services timestamp // im guessing this is when user gets +r from nickserv.
+            // userModes //  "+iwx"
+            // VHOST. * if blank
+            // CloakedIP // right now i'm just sending a random string but it should look like 
+            // Real IP address // This is the ip address, you can use *
+            // : realname   // RealName appears after the colon, because this can have spaces in it.
+            int hopcount = 0;
+            int timestamp = 0;
+            string username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
+            string hostname = "discordBot";
+            string uid = RandomString(9); // *MAJOR HACK* Need to track this
+            int serviceStamp = 0;
+            string userMode = "+iwx";
+            string vhost = "*";
+            string ipCloak = "bcloaked"; // bridge cloak
+            string ipAddress = "*";
+            string mstr = $":{_ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
+
             write(mstr);
 
         }
@@ -63,21 +79,22 @@ namespace BridgeMock_May2019
         {
             // example
             // :darkscrypt JOIN #topdev
-            string mstr = "";
-            mstr += ":" + nick + " ";
-            mstr += "JOIN ";
-            mstr += channel;
+            string mstr = $":{nick} JOIN {channel}";
             write(mstr);
         }
-        public void MessageChannel(string nick, string message, string channel = "#TOP")
+        public void SendMessage(string nick, string message, string channel = "#TOP")
         {
-            write(":" + nick + " PRIVMSG " + channel + " :" + message);
+            // example
+            // :darkscrypt PRIVMSG #top : message here
+            string mstr = $":{nick} PRIVMSG {channel} : {message}";
+            write(mstr);
         }
         public void Action(string nick, string action, string channel = "#TOP")
         {
-            // example  :shiftybit PRIVMSG #TOP :ACTION does some crazy shit
+            // example  :shiftybit PRIVMSG #TOP :ACTION flips a table
             //string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
-            string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}"; // Secret characters floating about... thar be dragons.
+            char c1 = (char)1; // control char 1
+            string mstr = $":{nick} PRIVMSG {channel} :{c1}ACTION {action}{c1}"; 
             write(mstr);
         }
         private void write(string line)
@@ -120,8 +137,6 @@ namespace BridgeMock_May2019
 
                 }
             }
-            
-
         }
     }
 }

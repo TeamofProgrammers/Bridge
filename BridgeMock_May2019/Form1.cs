@@ -66,7 +66,7 @@ namespace BridgeMock_May2019
 
         private void BtnSend_Click(object sender, EventArgs e)
         {
-            bridge.MessageChannel(txtUserName.Text, txtMessage.Text);
+            bridge.SendMessage(txtUserName.Text, txtMessage.Text);
             txtMessage.Clear();
         }
 
@@ -111,7 +111,7 @@ namespace BridgeMock_May2019
         {
             if (e.KeyCode == Keys.Enter)
             {
-                bridge.MessageChannel(txtUserName.Text, txtMessage.Text, txtChannel.Text);
+                bridge.SendMessage(txtUserName.Text, txtMessage.Text, txtChannel.Text);
                 txtMessage.Clear();
             }
         }
