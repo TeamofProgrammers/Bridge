@@ -102,14 +102,14 @@ namespace BridgeMock_May2019
             string mstr = $":{nick} JOIN {channel}";
             write(mstr);
         }
-        public void SendMessage(string nick, string message, string channel = "#TOP")
+        public void SendMessage(string nick, string message, string channel)
         {
             // example
-            // :darkscrypt PRIVMSG #top : message here
+            // :darkscrypt PRIVMSG #top : Hello World!
             string mstr = $":{nick} PRIVMSG {channel} : {message}";
             write(mstr);
         }
-        public void Action(string nick, string action, string channel = "#TOP")
+        public void SendAction(string nick, string action, string channel)
         {
             // example  :shiftybit PRIVMSG #TOP :ACTION flips a table
             // string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
