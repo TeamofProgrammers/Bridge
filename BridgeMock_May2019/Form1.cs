@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
+
 namespace BridgeMock_May2019
 {
     public partial class Form1 : Form
@@ -60,7 +62,7 @@ namespace BridgeMock_May2019
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            bridge = new BridgeService("192.168.1.6", 7001, "GoldenRetriever", InputLog, OutputLog);
+            bridge = new BridgeService(InputLog, OutputLog);
             bridge.StartBridge();
         }
 
@@ -75,8 +77,7 @@ namespace BridgeMock_May2019
             bridge.RegisterNick(txtUserName.Text);
         }
 
-        private void TxtUserName_KeyDown(object sender, KeyEventArgs e)
-        {
+        private void TxtUserName_KeyDown(object sender, KeyEventArgs e) {
             if(e.KeyCode == Keys.Enter)
             {
                 bridge.RegisterNick(txtUserName.Text);

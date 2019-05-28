@@ -3,10 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Net.Sockets;
-
+using System.Configuration;
+using System.Reflection;
+using System.Xml;
 
 namespace BridgeMock_May2019
 {
+    static class BridgeConfig
+    {
+        public static string ServerHost { get; set; }
+        public static int ServerPort { get; set; }
+        public static string ServerPassword { get; set; }
+        public static string ServerIdentifier { get; set; }
+
+        public static bool ReadConfig()
+        {
+            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+            DirectoryInfo path = new FileInfo(location.AbsolutePath).Directory;
+            FileInfo[] config = path.GetFiles("config.xml");
+            if(config.Length != 0)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(config[0].FullName);
+                XmlNode irc = doc.DocumentElement.SelectSingleNode("IRCServer");
+                ServerHost = irc["ServerHost"].InnerText;
+                ServerPort = int.Parse(irc["ServerPort"].InnerText);
+                ServerPassword = irc["ServerPassword"].InnerText;
+                ServerIdentifier = irc["ServerIdentifier"].InnerText;
+                return true;
+            }
+            return false;
+        }
+    }
     class BridgeUser
     {
         public string UID { get; set; }
@@ -15,28 +43,25 @@ namespace BridgeMock_May2019
     }
     class BridgeService
     {
-        private string _ServerHost;
-        private int _ServerPort;
-        private string _ServerPassword;
         private TcpClient tcpClient;
         private NetworkStream ns;
         private StreamReader reader;
         private StreamWriter writer;
         static Action<string> InputLog;
         static Action<string> OutputLog;
-        private string _ServerIdentifier;
         private List<BridgeUser> _BridgeUsers;
 
         private static Random r = new Random();
-        public BridgeService(string ServerHost, int ServerPort, string ServerPassword, Action<string> inputLog, Action<string> outputLog)
+        public BridgeService(Action<string> inputLog, Action<string> outputLog)
         {
-            this._ServerHost = ServerHost;
-            this._ServerPort = ServerPort;
-            this._ServerPassword = ServerPassword;
-            this._ServerIdentifier = "00B";
+            BridgeConfig.ReadConfig();
             InputLog = inputLog;
             OutputLog = outputLog;
             _BridgeUsers = new List<BridgeUser>();
+        }
+        public BridgeService()
+        {
+
         }
 
         public static string RandomString(int length)
@@ -80,7 +105,7 @@ namespace BridgeMock_May2019
                 string vhost = "*";
                 string ipCloak = "bcloaked"; // bridge cloak
                 string ipAddress = "*";
-                string mstr = $":{_ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
+                string mstr = $":{BridgeConfig.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
 
                 write(mstr);
                 var bridgeUser = new BridgeUser();
@@ -125,16 +150,16 @@ namespace BridgeMock_May2019
         }
         public void StartBridge()
         {
-            tcpClient = new TcpClient(_ServerHost, _ServerPort);
+            tcpClient = new TcpClient(BridgeConfig.ServerHost,BridgeConfig.ServerPort);
             ns = tcpClient.GetStream();
             reader = new StreamReader(ns);
             writer = new StreamWriter(ns);
-            write("PASS GoldenRetriever");
+            write($"PASS {BridgeConfig.ServerPassword}");
             write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
             write("PROTOCTL EAUTH=bridgeserv.teamofprogrammers.com");
-            write("PROTOCTL SID=00B");
+            write($"PROTOCTL SID={BridgeConfig.ServerIdentifier}");
             write("SERVER bridgeserv.teamofprogrammers.com 1 :change me");
-            write(":00B EOS");
+            write($":{BridgeConfig.ServerIdentifier} EOS");
             string input;
             while (true)
             {
