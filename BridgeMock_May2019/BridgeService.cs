@@ -18,12 +18,17 @@ namespace BridgeMock_May2019
         private NetworkStream ns;
         private StreamReader reader;
         private StreamWriter writer;
+        static Action<string> InputLog;
+        static Action<string> OutputLog;
+
         private static Random r = new Random();
-        public BridgeService(string ServerHost, int ServerPort, string ServerPassword)
+        public BridgeService(string ServerHost, int ServerPort, string ServerPassword, Action<string> inputLog, Action<string> outputLog)
         {
             this._ServerHost = ServerHost;
             this._ServerPort = ServerPort;
             this._ServerPassword = ServerPassword;
+            InputLog = inputLog;
+            OutputLog = outputLog;
         }
 
         public static string RandomString(int length)
@@ -68,10 +73,18 @@ namespace BridgeMock_May2019
         {
             write(":" + nick + " PRIVMSG " + channel + " :" + message);
         }
+        public void Action(string nick, string action, string channel = "#TOP")
+        {
+            // example  :shiftybit PRIVMSG #TOP :ACTION does some crazy shit
+            //string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
+            string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}"; // Secret characters floating about... thar be dragons.
+            write(mstr);
+        }
         private void write(string line)
         {
             writer.WriteLine(line);
             writer.Flush();
+            OutputLog(line);
         }
         public void StartBridge()
         {
@@ -90,6 +103,7 @@ namespace BridgeMock_May2019
             {
                 while((input = reader.ReadLine()) != null)
                 {
+                    InputLog(input);
                     string[] tokens = input.Split(' ');
                     if(tokens[0].ToUpper() == "PING")
                     {
