@@ -59,10 +59,6 @@ namespace BridgeMock_May2019
             OutputLog = outputLog;
             _BridgeUsers = new List<BridgeUser>();
         }
-        public BridgeService()
-        {
-
-        }
 
         public static string RandomString(int length)
         {
@@ -120,6 +116,24 @@ namespace BridgeMock_May2019
             }
 
         }
+        public void ChangeNick(string oldNick, string nick)
+        {
+            // Example
+            //:00257TR0R NICK bitshift 1559074834
+            //:00257TR0R NICK shiftybit 1559074836
+
+            var query = _BridgeUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower()));
+            if(query.ToList().Count == 0)
+            {
+                OutputLog($"Error: {oldNick} is not a valid user");
+                return;
+            }
+            BridgeUser user = query.First();
+            string mstr = $":{user.UID} NICK {nick} 0";
+            write(mstr);
+            user.Nick = nick;
+
+        }
         public void JoinChannel(string nick, string channel)
         {
             // example
@@ -130,8 +144,8 @@ namespace BridgeMock_May2019
         public void SendMessage(string nick, string message, string channel)
         {
             // example
-            // :darkscrypt PRIVMSG #top : Hello World!
-            string mstr = $":{nick} PRIVMSG {channel} : {message}";
+            // :darkscrypt PRIVMSG #top :Hello World!
+            string mstr = $":{nick} PRIVMSG {channel} :{message}";
             write(mstr);
         }
         public void SendAction(string nick, string action, string channel)

@@ -116,5 +116,10 @@ namespace BridgeMock_May2019
                 txtMessage.Clear();
             }
         }
+
+        private void BtnChangeNick_Click(object sender, EventArgs e)
+        {
+            bridge.ChangeNick(txtUserName.Text, txtChangeNick.Text);
+        }
     }
 }

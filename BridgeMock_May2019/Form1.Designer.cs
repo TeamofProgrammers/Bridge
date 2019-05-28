@@ -46,6 +46,8 @@
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtChangeNick = new System.Windows.Forms.TextBox();
+            this.btnChangeNick = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -195,21 +197,40 @@
             // clearLogToolStripMenuItem
             // 
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.ClearLogToolStripMenuItem_Click);
             // 
             // exportLogToolStripMenuItem
             // 
             this.exportLogToolStripMenuItem.Name = "exportLogToolStripMenuItem";
-            this.exportLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportLogToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.exportLogToolStripMenuItem.Text = "Export Log";
+            // 
+            // txtChangeNick
+            // 
+            this.txtChangeNick.Location = new System.Drawing.Point(369, 71);
+            this.txtChangeNick.Name = "txtChangeNick";
+            this.txtChangeNick.Size = new System.Drawing.Size(137, 20);
+            this.txtChangeNick.TabIndex = 14;
+            // 
+            // btnChangeNick
+            // 
+            this.btnChangeNick.Location = new System.Drawing.Point(513, 69);
+            this.btnChangeNick.Name = "btnChangeNick";
+            this.btnChangeNick.Size = new System.Drawing.Size(90, 23);
+            this.btnChangeNick.TabIndex = 15;
+            this.btnChangeNick.Text = "Change Nick";
+            this.btnChangeNick.UseVisualStyleBackColor = true;
+            this.btnChangeNick.Click += new System.EventHandler(this.BtnChangeNick_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(826, 551);
+            this.Controls.Add(this.btnChangeNick);
+            this.Controls.Add(this.txtChangeNick);
             this.Controls.Add(this.btnAction);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.btnJoin);
@@ -255,6 +276,8 @@
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportLogToolStripMenuItem;
+        private System.Windows.Forms.TextBox txtChangeNick;
+        private System.Windows.Forms.Button btnChangeNick;
     }
 }
 
