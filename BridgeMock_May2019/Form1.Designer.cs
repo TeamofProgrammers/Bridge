@@ -48,6 +48,7 @@
             this.exportLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtChangeNick = new System.Windows.Forms.TextBox();
             this.btnChangeNick = new System.Windows.Forms.Button();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -278,6 +279,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportLogToolStripMenuItem;
         private System.Windows.Forms.TextBox txtChangeNick;
         private System.Windows.Forms.Button btnChangeNick;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
     }
 }
 

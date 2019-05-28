@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
 
+
 namespace BridgeMock_May2019
 {
     public partial class Form1 : Form
@@ -26,9 +27,9 @@ namespace BridgeMock_May2019
             if (!richTextBox1.InvokeRequired) { 
                 richTextBox1.SelectionStart = richTextBox1.TextLength;
                 richTextBox1.SelectionLength = 0;
-                richTextBox1.SelectionColor = Color.DarkRed;
+                richTextBox1.SelectionColor = System.Drawing.Color.DarkRed;
                 richTextBox1.AppendText(text + "\r\n");
-                richTextBox1.SelectionColor = Color.Black;
+                richTextBox1.SelectionColor = System.Drawing.Color.Black;
            }
              else
             {
@@ -43,9 +44,9 @@ namespace BridgeMock_May2019
             {
                 richTextBox1.SelectionStart = richTextBox1.TextLength;
                 richTextBox1.SelectionLength = 0;
-                richTextBox1.SelectionColor = Color.DarkBlue;
+                richTextBox1.SelectionColor = System.Drawing.Color.DarkBlue;
                 richTextBox1.AppendText(text + "\r\n");
-                richTextBox1.SelectionColor = Color.Black;
+                richTextBox1.SelectionColor = System.Drawing.Color.Black;
             }
             else
             {
@@ -58,11 +59,15 @@ namespace BridgeMock_May2019
         {
             //System.Net.IPHostEntry host = System.Net.Dns.GetHostEntry("192.168.1.6");
             backgroundWorker1.RunWorkerAsync();
+
         }
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             bridge = new BridgeService(InputLog, OutputLog);
+            DiscordService discordService = new DiscordService(bridge);
+            discordService.MainAsync().GetAwaiter();
+            
             bridge.StartBridge();
         }
 

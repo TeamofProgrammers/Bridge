@@ -1,0 +1,1173 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DiscordSharp</name>
+    </assembly>
+    <members>
+        <member name="T:DiscordSharp.Color">
+            <summary>
+            Custom color class just because.
+            </summary>
+        </member>
+        <member name="T:DiscordSharp.EpochTime">
+            <summary>
+            This is Voltana's class for Unix time that I've borrowed for testing.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Events.DiscordVoiceUserSpeakingEventArgs.Speaking">
+            <summary>
+            This is true if the user began speaking or false if they stopped speaking. 
+            Eventually, these will be two seperate events.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordServer.Unavailable">
+            <summary>
+            If true, then the server is currently unavailable and normal events cannot occur.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordServer.GetBans">
+            <summary>
+            Retrieves a DiscordMember List of members banned in this server.
+            </summary>
+            <param name="server"></param>
+            <returns></returns>
+        </member>
+        <member name="P:DiscordSharp.Objects.RateLimitException.RetryAfter">
+            <summary>
+            The amount of time to retry the request after in ms.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermission.HasPermission(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Checks to see if the role has a specific permission.
+            </summary>
+            <param name="permission"></param>
+            <returns>True or false.</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermission.SetPermission(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Sets a specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermission.RemovePermission(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Removes the specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordPermissionOverride.id">
+            <summary>
+            If the type is role, then this is the id of the role.
+            If the type is member, then this is the id of the member in the server.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.AllowedPermission(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Checks to see if the role has a specific permission.
+            </summary>
+            <param name="permission"></param>
+            <returns>True or false.</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.DeniedPermission(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Checks to see if the role has a specific permission.
+            </summary>
+            <param name="permission"></param>
+            <returns>True or false.</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.SetPermissionAllowed(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Sets a specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.RemovePermissionAllowed(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Removes the specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.SetPermissionDenied(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Sets a specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordPermissionOverride.RemovePermissionDenied(DiscordSharp.Objects.DiscordSpecialPermissions)">
+            <summary>
+            Removes the specified permission on a user.
+            </summary>
+            <param name="permission"></param>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordRole.Hoist">
+            <summary>
+            Whether or not to display all members seperate of others.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordChannelBase.SimulateTyping">
+            <summary>
+            Simulates typing in the specified channel. Automatically times out/stops after either:
+            -10 Seconds
+            -A message is sent
+            </summary>
+            <param name="channel"></param>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordChannel.Bitrate">
+            <summary>
+            (Voice only) The channel's configured bitrate, in bps (bits per second).
+            It's highly recommended you use this as opposed to your own bitrate.
+            To retrieve the bitrate in kbps, divide by 1000.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordMember.Muted">
+                    Voice only
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordMember.Email">
+            <summary>
+            Applicable only for the currently signed in user.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Objects.DiscordMember.Parent">
+            <summary>
+            The server the user belongs to.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.#ctor">
+            <summary>
+            should only be used for Newtonsoft.Json
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.GetAvatar">
+            <summary>
+            Gets the user's avatar.
+            </summary>
+            <returns>A System.Drawing.Bitmap object that is the user's avatar.</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.GetAvatarURL">
+            <summary>
+            
+            </summary>
+            <returns>The URL of the user's avatar.</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.Kick">
+            <summary>
+            Kicks this DiscordMember from the guild that's assumed from their 
+            parent property.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.Copy">
+            <summary>
+            Testing copy method.
+            </summary>
+            <returns>A copied member, idk what more you expected</returns>
+        </member>
+        <member name="M:DiscordSharp.Objects.DiscordMember.Ban(System.Int32)">
+            <summary>
+            Bans this DiscordMember from the guild that's assumed from their
+            parent property.
+            </summary>
+            <param name="days">The number of days the user should be banned for, or 0 for infinite.</param>
+        </member>
+        <member name="T:DiscordSharp.Objects.DiscordMessage">
+            <summary>
+            Message to be sent
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.DISPATCH">
+            <summary>
+            Received only. When a regular event is dispatched (defined in T)
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.HEARTBEAT">
+            <summary>
+            Received and sent out to verify a connection is still alive.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.IDENTIFY">
+            <summary>
+            Sent only: initiates and starts a new connection
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.PRESENCE">
+            <summary>
+            Sent only: Updates the presence of the current user.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.VOICE_STATE">
+            <summary>
+            Sent only: initiates a connection to a voice server or updates an existing one.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.VOICE_PING">
+            <summary>
+            Sent only: for the ping time to the voice server.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.RESUME">
+            <summary>
+            Sent only: Second way to initiate a connection. Resumes an existing one.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.RECONNECT">
+            <summary>
+            Received only: tells the client to reconnect to a new gateway.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.REQUEST_MEMBERS">
+            <summary>
+            Sent only: asks the server for a list of particular members in a guild.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Opcodes.INVALIDATE_SESSION">
+            <summary>
+            Received only: tells the client to invalidate and re-identify.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper._onDisconnected">
+            <summary>
+            CloseStatus.Value.ToString()
+            CloseStatusDescription
+            Socket
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.Create(System.String)">
+            <summary>
+            Creates a new instance.
+            </summary>
+            <param name="uri">The URI of the WebSocket server.</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.Connect">
+            <summary>
+            Connects to the WebSocket server.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.OnConnect(System.Action{DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper})">
+            <summary>
+            Set the Action to call when the connection has been established.
+            </summary>
+            <param name="onConnect">The Action to call.</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.OnDisconnect(System.Action{System.Int32,System.String,DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper})">
+            <summary>
+            Set the Action to call when the connection has been terminated.
+            </summary>
+            <param name="onDisconnect">The Action to call</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.OnMessage(System.Action{System.String,DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper})">
+            <summary>
+            Set the Action to call when a messages has been received.
+            </summary>
+            <param name="onMessage">The Action to call.</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Sockets.BuiltIn.NetWebSocketWrapper.SendMessage(System.String)">
+            <summary>
+            Send a message to the WebSocket server.
+            </summary>
+            <param name="message">The message to send</param>
+        </member>
+        <member name="T:DiscordSharp.Sockets.IDiscordWebSocket">
+            <summary>
+            Provides an interface for all DiscordSharp websockets to implement for multiple backends without heavy editing.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Sockets.IDiscordWebSocket.URL">
+            <summary>
+            The URL to connect to.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.Sockets.IDiscordWebSocket.IsAlive">
+            <summary>
+            Whether or not the socket is alive.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.Sockets.IDiscordWebSocket.MessageReceived">
+            <summary>
+            Occurs when the websocket receives a message.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.Sockets.IDiscordWebSocket.SocketClosed">
+            <summary>
+            Occurs when the socket is closed.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.Sockets.IDiscordWebSocket.SocketOpened">
+            <summary>
+            Occurs when the socket is opened.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.Sockets.IDiscordWebSocket.SocketError">
+            <summary>
+            Occurs when the socket receives an error.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.Sockets.WebSocketSharpSocket.HookupEvents">
+            <summary>
+            Hooks up events to automatically be redirected to the interface's events.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:DiscordSharp.DiscordAudioPacket.RTP_VERSION_PAD_EXTEND" -->
+        <member name="P:DiscordSharp.DiscordVoiceConfig.Channels">
+            <summary>
+            The amount of channels you wish to send over the network.
+            Use 2 for stereo. Stereo will require more bandwidth.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordVoiceConfig.FrameLengthMs">
+            <summary>
+            The frame length, in ms, of audio you'll be sending at one time.
+            As a rule of thumb, you generally want to set it to something above your current Discord ping.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordVoiceConfig.Bitrate">
+            <summary>
+            The voice client now auto-configures this based on the channel.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordVoiceConfig.OpusMode">
+            <summary>
+            The mode the Opus encoder will use.
+            MusicOrMixed is generally the best.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordVoiceConfig.SendOnly">
+            <summary>
+            If true, the voice client will only send voice and will not receive it.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordVoiceConfig.PCMBlockSize">
+            <summary>
+            The blocksize of PCM data you should be reading and piping into DiscordSharp.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordVoiceClient.msToSend">
+            <summary>
+            The length, in ms, of audio for DiscordSharp to send. By default, 20.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordVoiceClient.___sequence">
+            <summary>
+            An signed short designating the sequence of the audio being sent.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordVoiceClient.___timestamp">
+            <summary>
+            Unsigned int designating the timestamp offset of the audio being sent.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.Initiate">
+            <summary>
+            Begins the voice client connection.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.SendIPOverUDP(DiscordSharp.DiscordIpPort)">
+            <summary>
+            Sends our IP over UDP for Discord's voice server to process. Also sends op 1
+            </summary>
+            <param name="buffer">The byte[] returned after sending your ssrc.</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.SendVoice(System.Byte[])">
+            <summary>
+            Enqueues audio to be sent through the UDP client.
+            </summary>
+            <param name="voice">PCM audio data.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.ClearVoiceQueue">
+            <summary>
+            Clears the voice queue thus stopping the audio.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.EchoPacket(DiscordSharp.DiscordAudioPacket)">
+            <summary>
+            Echos a given DiscordAudioPacket.
+            </summary>
+            <param name="packet"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.SendPacket(DiscordSharp.DiscordAudioPacket)">
+            <summary>
+            Sends a given DiscordAudioPacket over the UDP client..
+            </summary>
+            <param name="packet"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordVoiceClient.SetSpeaking(System.Boolean)">
+            <summary>
+            Whether or not the current client is set to be speaking.
+            </summary>
+            <param name="speaking">If true, you will be set to speaking.</param>
+        </member>
+        <member name="T:DiscordSharp.Endpoints">
+            <summary>
+            The class that contains the end points needed by DiscordSharp.
+            </summary>
+        </member>
+        <member name="T:DiscordSharp.DiscordProperties">
+            <summary>
+            Properties that Discord uses upon connection to the websocket. Mostly used for analytics internally.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordProperties.OS">
+            <summary>
+            The OS you're on
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordProperties.Browser">
+            <summary>
+            The "browser" you're using.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordProperties.Device">
+            <summary>
+            Whatever device you want to be on. (Default: DiscordSharp Bot)
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordProperties.referrer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordProperties.referring_domain">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordProperties.#ctor">
+            <summary>
+            Default constructor setting the OS property to Environment.OSVersion.ToString();
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordProperties.AsJson">
+            <summary>
+            Serializes this object as json.
+            </summary>
+            <returns>Json string of this object serialized</returns>
+        </member>
+        <member name="T:DiscordSharp.DiscordMessageType">
+            <summary>
+            The type of message that the Discord message is.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordMessageType.PRIVATE">
+            <summary>
+            Private/DM
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordMessageType.CHANNEL">
+            <summary>
+            Public/in a channel.
+            </summary>
+        </member>
+        <member name="T:DiscordSharp.DiscordClient">
+            <summary>
+            Where the magic happens. 
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.token">
+            <summary>
+            The token associated with authenticating your bot and ensuring they can send messages.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.IsBotAccount">
+            <summary>
+            If this is true, the account this client is running on is a special bot account.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.CurrentGatewayURL">
+            <summary>
+            The URL that the client websocket is currently connected to.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.ClientPrivateInformation">
+            <summary>
+            Any private information assosciated with the account (regular clients only)
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.DiscordProperties">
+            <summary>
+            Custom properties containing parameters such as
+            * OS
+            * Referrer
+            * Browser
+            Used by Discord internally for connection.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.Me">
+            <summary>
+            The current DiscordMember object assosciated with the account you're connected to.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.GetTextClientLogger">
+            <summary>
+            Returns the debug logger used to log various debug events.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordClient.GetLastVoiceClientLogger">
+            <summary>
+            Returns the last debug logger for when the voice client was last connected.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.EnableVerboseLogging">
+            <summary>
+            If true, the logger will log everything.
+            Everything.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.DiscordGatewayVersion">
+            <summary>
+            The version of the gateway.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordClient.SessionID">
+            <summary>
+            V4 related things. Getting this means our session has been successfully initiated.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordClient.Sequence">
+            <summary>
+            The last sequence we received used for v4 heartbeat.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.Autoconnect">
+            <summary>
+            Whether or not to send Opcode 6 (resume) upon a socket being closed.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordClient.RemovedMembers">
+            <summary>
+            Testing.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.WriteLatestReady">
+            <summary>
+            Whether or not to write the latest READY upon receiving it.
+            If this is true, the client will write the contents of the READY message to 'READY_LATEST.txt'
+            If your client is connected to a lot of servers, this file will be quite large.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.RequestAllUsersOnStartup">
+            <summary>
+            Whether or not to request all users in a guild (including offlines) on startup.
+            </summary>
+        </member>
+        <member name="F:DiscordSharp.DiscordClient.MessageLog">
+            <summary>
+            A log of messages kept in a KeyValuePair.
+            The key is the id of the message, and the value is a DiscordMessage object. If you need raw json, this is contained inside of the DiscordMessage object now.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.GuildAvailable">
+            <summary>
+            Occurs when a guild becomes available after being unavailable.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.AudioPacketReceived">
+            <summary>
+            For use when connected to voice only.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.UserSpeaking">
+            <summary>
+            For use when connected to voice only.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.UserLeftVoiceChannel">
+            <summary>
+            For use when connected to voice only.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.VoiceClientConnected">
+            <summary>
+            Occurs when the voice client is fully connected to voice.
+            </summary>
+        </member>
+        <member name="E:DiscordSharp.DiscordClient.VoiceQueueEmpty">
+            <summary>
+            Occurs when the voice queue is emptied.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="tokenOverride">If you have a token you wish to use, provide it here. Else, a login attempt will be made.</param>
+            <param name="isBotAccount">Set this to true if your bot is going to be a bot account</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetServersList">
+            <summary>
+            Current DiscordServers you're connected to.
+            </summary>
+            <returns>DiscordServer list of servers you're currently connected to.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetMessageLog">
+            <summary>
+            Any messages logged since connection to the websocket.
+            </summary>
+            <returns>A KeyValuePair list of string-DiscordMessage. Where string is the message's ID</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetPrivateChannels">
+            <summary>
+            Private channels assosciated with the account.
+            </summary>
+            <returns>a list of DiscordPrivateChannels.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ConnectedToVoice">
+            <summary>
+            
+            </summary>
+            <returns>True if connected to voice.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.LeaveServer(DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            Sends an http DELETE request to leave the server you send in this parameter.
+            </summary>
+            <param name="server">The DiscordServer object you want to leave.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteServer(DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            (Owner only, non-bot only) Sends an http DELETE request to delete the server you specify.
+            </summary>
+            <param name="server">The DiscordServer object you want to delete.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.LeaveServer(System.String)">
+            <summary>
+            (Owner only, non-bot only) Sends an http DELETE request to delete the server you specify.
+            </summary>
+            <param name="ServerID">The server's ID you want to delete.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteServer(System.String)">
+            <summary>
+            (Owner only, non-bot only) Sends an http DELETE request to delete the server you specify by ID.
+            </summary>
+            <param name="ServerID">The server's ID you want to delete.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.SendMessageToChannel(System.String,DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            Sends a message to a channel, what else did you expect?
+            </summary>
+            <param name="message">The text to send</param>
+            <param name="channel">DiscordChannel object to send the message to.</param>
+            <returns>A DiscordMessage object of the message sent to Discord.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.AttachFile(DiscordSharp.Objects.DiscordChannel,System.String,System.String)">
+            <summary>
+            Sends a file to the specified DiscordChannel with the given message.
+            </summary>
+            <param name="channel">The channel to send the message to.</param>
+            <param name="message">The message you want the file to have with it.</param>
+            <param name="pathToFile">The path to the file you wish to send (be careful!)</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.AttachFile(DiscordSharp.Objects.DiscordChannel,System.String,System.IO.Stream)">
+            <summary>
+            Sends a file to the specified DiscordChannel with the given message.
+            </summary>
+            <param name="channel">The channel to send the message to.</param>
+            <param name="message">The message you want the file to have with it.</param>
+            <param name="stream">A stream object to send the bytes from.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ChangeClientAvatar(System.Drawing.Bitmap)">
+            <summary>
+            Changes the current client's avatar.
+            Any high resolution pictures are automatically downscaled and Discord will perform jpeg compression on them.
+            </summary>
+            <param name="image">The Bitmap object assosciated with the avatar you wish to upload.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ChangeGuildIcon(System.Drawing.Bitmap,DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            Changes the icon assosciated with the guild. Discord will perform jpeg compression and this image is automatically downscaled.
+            </summary>
+            <param name="image">The bitmap object associated </param>
+            <param name="guild">The guild of the icon you wish to change.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetMessageHistory(DiscordSharp.Objects.DiscordChannelBase,System.Int32,System.String,System.String)">
+            <summary>
+            Returns a List of DiscordMessages. 
+            </summary>
+            <param name="channel">The channel to return them from.</param>
+            <param name="count">How many to return</param>
+            <param name="idBefore">Messages before this message ID.</param>
+            <param name="idAfter">Messages after this message ID.</param>
+            <returns>A List of DiscordMessages that you can iterate through.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ChangeChannelTopic(System.String,DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            Changes the channel topic assosciated with the Discord text channel.
+            </summary>
+            <param name="Channeltopic">The new channel topic.</param>
+            <param name="channel">The channel you wish to change the topic for.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ChangeClientInformation(DiscordSharp.Objects.DiscordUserInformation)">
+            <summary>
+            Used for changing the client's email, password, username, etc.
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.SendMessageToUser(System.String,DiscordSharp.Objects.DiscordMember)">
+            <summary>
+            Sends a private message to the given user.
+            </summary>
+            <param name="message">The message text to send them.</param>
+            <param name="member">The member you want to send this to.</param>
+            <returns></returns>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.GetCurrentGame">
+            <summary>
+            Gets the string value of the current game your bot is 'playing'.
+            </summary>
+        </member>
+        <member name="P:DiscordSharp.DiscordClient.WebsocketAlive">
+            <summary>
+            Returns true if the websocket is not null and is alive.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.UpdateCurrentGame(System.String)">
+            <summary>
+            Updates the bot's 'Currently playing' status to the following text. Pass in null if you want to remove this.
+            </summary>
+            <param name="gameName">The game's name. Old gameid lookup can be seen at: http://hastebin.com/azijiyaboc.json/ </param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.UpdateBotStatus(System.Boolean)">
+            <summary>
+            Updates the bot's status.
+            </summary>
+            <param name="idle">True if you want the bot to report as idle.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteMessage(System.String)">
+            <summary>
+            Deletes a message with a specified ID.
+            This method will only work if the message was sent since the bot has ran.
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteMessage(DiscordSharp.Objects.DiscordMessage)">
+            <summary>
+            Deletes a specified DiscordMessage.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteAllMessages">
+            <summary>
+            Deletes all messages made by the bot since running.
+            </summary>
+            <returns>A count of messages deleted.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteMultipleMessagesInChannel(DiscordSharp.Objects.DiscordChannel,System.Int32)">
+            <summary>
+            Deletes the specified number of messages in a given channel.
+            Thank you to Siegen for this idea/method!
+            </summary>
+            <param name="channel">The channel to delete messages in.</param>
+            <param name="count">The amount of messages to delete (max 100)</param>
+            <returns>The count of messages deleted.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetMemberFromChannel(DiscordSharp.Objects.DiscordChannelBase,System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="channel"></param>
+            <param name="username"></param>
+            <param name="caseSensitive"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetMemberFromChannel(DiscordSharp.Objects.DiscordChannelBase,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="channel"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetChannelByName(System.String)">
+            <summary>
+            you probably shouldn't use this.
+            </summary>
+            <param name="channelName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetChannelByID(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.AcceptInvite(System.String)">
+            <summary>
+            (Client account only) accepts an invite to a server.
+            </summary>
+            <param name="inviteID">The ID of the invite you want to accept. This is NOT the full URL of the invite</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetLastMessageSent">
+            <summary>
+            
+            </summary>
+            <returns>The last DiscordMessage sent</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetLastMessageSent(DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            
+            </summary>
+            <param name="inChannel"></param>
+            <returns>The last DiscordMessage sent in the given channel</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.EditMessage(System.String,System.String,DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            If you screwed up, you can use this method to edit a given message. This sends out an http patch request with a replacement message
+            </summary>
+            <param name="MessageID">The ID of the message you want to edit.</param>
+            <param name="replacementMessage">What you want the text to be edited to.</param>
+            <param name="channel">The channel the message is in</param>
+            <returns>the new and improved DiscordMessage object.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetServerChannelIsIn(DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            
+            </summary>
+            <param name="channel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteChannel(DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            Deletes a specified Discord channel given you have the permission.
+            </summary>
+            <param name="channel">The DiscordChannel object to delete</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.CreateChannel(DiscordSharp.Objects.DiscordServer,System.String,System.Boolean)">
+            <summary>
+            Creates either a text or voice channel in a DiscordServer given a name. Given you have the permission of course.
+            </summary>
+            <param name="server">The server to create the channel in.</param>
+            <param name="ChannelName">The name of the channel (will automatically be lowercased if text)</param>
+            <param name="voice">True if you want the channel to be a voice channel.</param>
+            <returns>The newly created DiscordChannel</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.CreateGuild(System.String)">
+            <summary>
+            Creates an empty guild with only this client in it given the following name.
+            Unknown if works on bot accounts or not.
+            </summary>
+            <param name="GuildName">The name of the guild you wish to create.</param>
+            <returns>the created DiscordServer</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.EditGuildName(DiscordSharp.Objects.DiscordServer,System.String)">
+            <summary>
+            Edits the name of the guild, given you have the permission.
+            </summary>
+            <param name="guild">The guild's name you wish to edit.</param>
+            <param name="NewGuildName">The new guild name.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.AssignRoleToMember(DiscordSharp.Objects.DiscordServer,DiscordSharp.Objects.DiscordRole,DiscordSharp.Objects.DiscordMember)">
+            <summary>
+            Assigns a specified role to a member, given you have the permission.
+            </summary>
+            <param name="guild">The guild you and the user are in.</param>
+            <param name="role">The role you wish to assign them.</param>
+            <param name="member">The member you wish to assign the role to.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.AssignRoleToMember(DiscordSharp.Objects.DiscordServer,System.Collections.Generic.List{DiscordSharp.Objects.DiscordRole},DiscordSharp.Objects.DiscordMember)">
+            <summary>
+            Assigns the specified roles to a member, given you have the permission.
+            </summary>
+            <param name="guild">The guild you and the user are in.</param>
+            <param name="roles">The roles you wish to assign them.</param>
+            <param name="member">The member you wish to assign the role to.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.CreateInvite(DiscordSharp.Objects.DiscordChannel)">
+            <summary>
+            Creates and invite to the given channel.
+            </summary>
+            <param name="channel"></param>
+            <returns>The invite's id.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteInvite(System.String)">
+            <summary>
+            Deletes an invite by id
+            </summary>
+            <param name="id">The ID of the invite you wish to delete.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.MakeInviteURLFromCode(System.String)">
+            <summary>
+            Just prepends https://discord.gg/ to a given invite :)
+            </summary>
+            <param name="id"></param>
+            <returns>A full invite URL.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.Connect">
+            <summary>
+            Runs the websocket connection for the client hooking up the appropriate events.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.KickMember(DiscordSharp.Objects.DiscordMember)">
+            <summary>
+            Kicks a specified DiscordMember from the guild that's assumed from their 
+            parent property.
+            </summary>
+            <param name="member"></param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.BanMember(DiscordSharp.Objects.DiscordMember,System.Int32)">
+            <summary>
+            Bans a specified DiscordMember from the guild that's assumed from their
+            parent property.
+            </summary>
+            <param name="member"></param>
+            <param name="days">The number of days the user should be banned for, or 0 for infinite.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.BanMember(DiscordSharp.Objects.DiscordMember,DiscordSharp.Objects.DiscordServer,System.Int32)">
+            <summary>
+            Bans a specified DiscordMember from the guild that's assumed from their
+            parent property.
+            </summary>
+            <param name="member"></param>
+            <param name="serverOverride"></param>
+            <param name="days"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetBans(DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            Retrieves a DiscordMember List of members banned in the specified server.
+            </summary>
+            <param name="server"></param>
+            <returns>Null if no permission.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.RemoveBan(DiscordSharp.Objects.DiscordServer,System.String)">
+            <summary>
+            Removes a ban on the user.
+            </summary>
+            <param name="guild">The guild to lift the ban from.</param>
+            <param name="userID">The ID of the user to lift the ban.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.RemoveBan(DiscordSharp.Objects.DiscordServer,DiscordSharp.Objects.DiscordMember)">
+            <summary>
+            Removes a ban on the user.
+            </summary>
+            <param name="guild">The guild to lift the ban from.</param>
+            <param name="member">The DiscordMember object of the user to lift the ban from, assuming you have it.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.EchoPacket(DiscordSharp.DiscordAudioPacket)">
+            <summary>
+            Echoes a received audio packet back.
+            </summary>
+            <param name="packet"></param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ConnectToVoiceChannel(DiscordSharp.Objects.DiscordChannel,DiscordSharp.DiscordVoiceConfig,System.Boolean,System.Boolean)">
+            <summary>
+            Connects to a given voice channel.
+            </summary>
+            <param name="channel">The channel to connect to. </param>
+            <param name="voiceConfig">The voice configuration to use. If null, default values will be used.</param>
+            <param name="clientMuted">Whether or not the client will connect muted. Defaults to false.</param>
+            <param name="clientDeaf">Whether or not the client will connect deaf. Defaults to false.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ClearInternalMessageLog">
+            <summary>
+            Clears the internal message log cache
+            </summary>
+            <returns>The number of internal messages cleared.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.ClearOfflineUsersFromServer(DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            Iterates through a server's members and removes offline users.
+            </summary>
+            <param name="server"></param>
+            <returns>The amount of users cleared.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DisconnectFromVoice">
+            <summary>
+            Also disposes
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.GetVoiceClient">
+            <summary>
+            
+            </summary>
+            <returns>The current VoiceClient or null.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.CreateRole(DiscordSharp.Objects.DiscordServer)">
+            <summary>
+            Creates a default role in the specified guild.
+            </summary>
+            <param name="guild">The guild to make the role in.</param>
+            <returns>The newly created role.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.EditRole(DiscordSharp.Objects.DiscordServer,DiscordSharp.Objects.DiscordRole)">
+            <summary>
+            Edits a role with the new role information.
+            </summary>
+            <param name="guild">The guild the role is in.</param>
+            <param name="newRole">the new role.</param>
+            <returns>The newly edited role returned from Discord.</returns>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.DeleteRole(DiscordSharp.Objects.DiscordServer,DiscordSharp.Objects.DiscordRole)">
+            <summary>
+            Deletes a specified role.
+            </summary>
+            <param name="guild">The guild the role is in.</param>
+            <param name="role">The role to delete.</param>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.Dispose">
+            <summary>
+            Disposes.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.Logout">
+            <summary>
+            Logs out of Discord and then disposes.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.DiscordClient.SendLoginRequest">
+            <summary>
+            Sends a login request.
+            </summary>
+            <returns>The token if login was succesful, or null if not</returns>
+        </member>
+        <member name="M:DiscordSharp.Logger.Log(System.String)">
+            <summary>
+            Logs a message with the given text with a default level of Debug.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:DiscordSharp.Logger.GetLog(System.DateTime)">
+            <summary>
+            Returns the first log at the given time.
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.Logger.GetLogs(DiscordSharp.MessageLevel)">
+            <summary>
+            Returns a list of the logs with the given level
+            </summary>
+            <param name="level"></param>
+            <returns></returns>
+        </member>
+        <member name="F:DiscordSharp.Voice.OpusConverter.BitsPerSample">
+            <summary> Gets the bit rate of this converter. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.InputSamplingRate">
+            <summary> Gets the input sampling rate of this converter. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.InputChannels">
+            <summary> Gets the number of channels of this converter. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.FrameLength">
+            <summary> Gets the milliseconds per frame. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.SamplesPerFrame">
+            <summary> Gets the number of samples per frame. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.FrameSize">
+            <summary> Gets the bytes per frame. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusConverter.SampleSize">
+            <summary> Gets the bytes per sample. </summary>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusDecoder.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary> Creates a new Opus decoder. </summary>
+            <param name="samplingRate">Sampling rate of the input PCM (in Hz). Supported Values:  8000, 12000, 16000, 24000, or 48000</param>
+            <param name="frameLength">Length, in milliseconds, of each frame. Supported Values: 2.5, 5, 10, 20, 40, or 60</param>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusDecoder.DecodeFrame(System.Byte[],System.Int32,System.Int32,System.Byte[])">
+            <summary> Produces PCM samples from Opus-encoded audio. </summary>
+            <param name="input">PCM samples to decode.</param>
+            <param name="inputOffset">Offset of the frame in input.</param>
+            <param name="output">Buffer to store the decoded frame.</param>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusEncoder.BitRate">
+            <summary> Gets the bit rate in kbit/s. </summary>
+        </member>
+        <member name="P:DiscordSharp.Voice.OpusEncoder.Application">
+            <summary> Gets the coding mode of the encoder. </summary>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusEncoder.#ctor(System.Int32,System.Int32,System.Int32,System.Nullable{System.Int32},DiscordSharp.Voice.OpusApplication)">
+            <summary> Creates a new Opus encoder. </summary>
+            <param name="samplingRate">Sampling rate of the input signal (Hz). Supported Values:  8000, 12000, 16000, 24000, or 48000</param>
+            <param name="channels">Number of channels in input signal. Supported Values: 1 or 2</param>
+            <param name="frameLength">Length, in milliseconds, that each frame takes. Supported Values: 2.5, 5, 10, 20, 40, 60</param>
+            <param name="bitrate">Bitrate (kbit/s) used for this encoder. Supported Values: 1-512. Null will use the recommended bitrate. </param>
+            <param name="application">Coding mode.</param>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusEncoder.EncodeFrame(System.Byte[],System.Int32,System.Byte[])">
+            <summary> Produces Opus encoded audio from PCM samples. </summary>
+            <param name="input">PCM samples to encode.</param>
+            <param name="inputOffset">Offset of the frame in pcmSamples.</param>
+            <param name="output">Buffer to store the encoded frame.</param>
+            <returns>Length of the frame contained in outputBuffer.</returns>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusEncoder.SetForwardErrorCorrection(System.Boolean)">
+            <summary> Gets or sets whether Forward Error Correction is enabled. </summary>
+        </member>
+        <member name="M:DiscordSharp.Voice.OpusEncoder.SetBitrate(System.Int32)">
+            <summary> Gets or sets whether Forward Error Correction is enabled. </summary>
+        </member>
+        <member name="T:DiscordSharp.WebWrapper">
+            <summary>
+            Convienent wrapper for doing anything web related.
+            </summary>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Delete(System.String,System.String)">
+            <summary>
+            Sends a DELETE HTTP request to the specified URL using the specified token.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Put(System.String,System.String)">
+            <summary>
+            Sends a PUT HTTP request to the specified URL using the specified token.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Post(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Sends a POST HTTP request to the specified URL, using the specified token, sending the specified message.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Post(System.String,System.String)">
+            <summary>
+            Sends a POST HTTP request to the specified URL, without a token, sending the specified message.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Patch(System.String,System.String,System.String)">
+            <summary>
+            Sends a POST HTTP request to the specified URL, using the specified token, sending the specified message.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DiscordSharp.WebWrapper.Get(System.String,System.String)">
+            <summary>
+            Sends a GET Request to the specified url using the provided token.
+            </summary>
+            <param name="url"></param>
+            <param name="token"></param>
+            <returns>The raw string returned. Or, an error.</returns>
+        </member>
+        <member name="M:Net35Extensions.HasFlag(System.Enum,System.Enum)">
+            <summary>
+            Check to see if a flags enumeration has a specific flag set.
+            </summary>
+            <param name="variable">Flags enumeration to check</param>
+            <param name="value">Flag to check for</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
