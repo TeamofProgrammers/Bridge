@@ -65,7 +65,7 @@ namespace BridgeMock_May2019
             }
             else
             {
-                TextBoxDelegate d = new TextBoxDelegate(InputLog);
+                TextBoxDelegate d = new TextBoxDelegate(EventLog);
                 this.Invoke(d, new object[] { text });
             }
         }
