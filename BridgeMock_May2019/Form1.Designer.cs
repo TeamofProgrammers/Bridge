@@ -36,7 +36,7 @@
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabIrc = new System.Windows.Forms.TabPage();
-            this.tabDiscord = new System.Windows.Forms.TabPage();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.btnChangeNick = new System.Windows.Forms.Button();
             this.txtChangeNick = new System.Windows.Forms.TextBox();
             this.btnAction = new System.Windows.Forms.Button();
@@ -51,10 +51,10 @@
             this.txtMessage = new System.Windows.Forms.TextBox();
             this.txtChannel = new System.Windows.Forms.TextBox();
             this.txtUserName = new System.Windows.Forms.TextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.tabDiscord = new System.Windows.Forms.TabPage();
             this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabIrc.SuspendLayout();
@@ -135,18 +135,16 @@
             this.tabIrc.Text = "IRC Controls";
             this.tabIrc.UseVisualStyleBackColor = true;
             // 
-            // tabDiscord
+            // richTextBox1
             // 
-            this.tabDiscord.Controls.Add(this.label7);
-            this.tabDiscord.Controls.Add(this.label6);
-            this.tabDiscord.Controls.Add(this.richTextBox2);
-            this.tabDiscord.Location = new System.Drawing.Point(4, 22);
-            this.tabDiscord.Name = "tabDiscord";
-            this.tabDiscord.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDiscord.Size = new System.Drawing.Size(818, 513);
-            this.tabDiscord.TabIndex = 1;
-            this.tabDiscord.Text = "Discord Controls";
-            this.tabDiscord.UseVisualStyleBackColor = true;
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.Location = new System.Drawing.Point(10, 138);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(802, 358);
+            this.richTextBox1.TabIndex = 30;
+            this.richTextBox1.Text = "";
             // 
             // btnChangeNick
             // 
@@ -156,6 +154,7 @@
             this.btnChangeNick.TabIndex = 29;
             this.btnChangeNick.Text = "Change Nick";
             this.btnChangeNick.UseVisualStyleBackColor = true;
+            this.btnChangeNick.Click += new System.EventHandler(this.BtnChangeNick_Click);
             // 
             // txtChangeNick
             // 
@@ -172,6 +171,7 @@
             this.btnAction.TabIndex = 27;
             this.btnAction.Text = "Action!";
             this.btnAction.UseVisualStyleBackColor = true;
+            this.btnAction.Click += new System.EventHandler(this.BtnAction_Click);
             // 
             // btnJoin
             // 
@@ -181,6 +181,7 @@
             this.btnJoin.TabIndex = 26;
             this.btnJoin.Text = "Join";
             this.btnJoin.UseVisualStyleBackColor = true;
+            this.btnJoin.Click += new System.EventHandler(this.BtnJoin_Click);
             // 
             // btnRegister
             // 
@@ -190,6 +191,7 @@
             this.btnRegister.TabIndex = 25;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.BtnRegister_Click);
             // 
             // btnSend
             // 
@@ -199,6 +201,7 @@
             this.btnSend.TabIndex = 24;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.BtnSend_Click);
             // 
             // label5
             // 
@@ -251,6 +254,7 @@
             this.txtMessage.Name = "txtMessage";
             this.txtMessage.Size = new System.Drawing.Size(258, 20);
             this.txtMessage.TabIndex = 18;
+            this.txtMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtMessage_KeyDown);
             // 
             // txtChannel
             // 
@@ -258,6 +262,7 @@
             this.txtChannel.Name = "txtChannel";
             this.txtChannel.Size = new System.Drawing.Size(100, 20);
             this.txtChannel.TabIndex = 17;
+            this.txtChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtChannel_KeyDown);
             // 
             // txtUserName
             // 
@@ -265,17 +270,38 @@
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.Size = new System.Drawing.Size(100, 20);
             this.txtUserName.TabIndex = 16;
+            this.txtUserName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtUserName_KeyDown);
             // 
-            // richTextBox1
+            // tabDiscord
             // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Location = new System.Drawing.Point(10, 138);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(802, 358);
-            this.richTextBox1.TabIndex = 30;
-            this.richTextBox1.Text = "";
+            this.tabDiscord.Controls.Add(this.label7);
+            this.tabDiscord.Controls.Add(this.label6);
+            this.tabDiscord.Controls.Add(this.richTextBox2);
+            this.tabDiscord.Location = new System.Drawing.Point(4, 22);
+            this.tabDiscord.Name = "tabDiscord";
+            this.tabDiscord.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDiscord.Size = new System.Drawing.Size(818, 513);
+            this.tabDiscord.TabIndex = 1;
+            this.tabDiscord.Text = "Discord Controls";
+            this.tabDiscord.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(91, 37);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(75, 13);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "To be desired.";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(45, 17);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "I leave more";
             // 
             // richTextBox2
             // 
@@ -287,24 +313,6 @@
             this.richTextBox2.Size = new System.Drawing.Size(806, 331);
             this.richTextBox2.TabIndex = 0;
             this.richTextBox2.Text = "";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(45, 17);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(65, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "I leave more";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(91, 37);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 13);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "To be desired.";
             // 
             // Form1
             // 

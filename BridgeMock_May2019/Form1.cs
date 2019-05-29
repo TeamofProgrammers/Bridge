@@ -154,5 +154,6 @@ namespace BridgeMock_May2019
         {
             bridge.ChangeNick(txtUserName.Text, txtChangeNick.Text);
         }
+
     }
 }
