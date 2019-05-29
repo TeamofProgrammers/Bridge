@@ -22,6 +22,7 @@
 * Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
 * Add SSL/TLS to the connection.
 * Allow for Hostnames to be used in the ServerHost section. 
+* Put everything back in bin/debug, as things are just becoming messy now. 
 
 ## Setup
 ### Requirements
