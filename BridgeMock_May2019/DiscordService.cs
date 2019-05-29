@@ -22,11 +22,19 @@ namespace BridgeMock_May2019
         private string _Token;
         private ulong _GuildID;
         private List<ChannelLink> _ChannelLinks;
-        public DiscordService(BridgeService bridge)
+        static Action<string> _EventLog;
+
+        private void IrcChannelMessage(object s, EventArgs e)
         {
+            _EventLog("Channel Message Received");
+        }
+        public DiscordService(BridgeService bridge, Action<string> EventLog)
+        {
+            _EventLog = EventLog;
             _ChannelLinks = new List<ChannelLink>();
             ReadConfig();
             _bridge = bridge;
+            _bridge.OnChannelMessage += new EventHandler(IrcChannelMessage);
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
@@ -34,6 +42,7 @@ namespace BridgeMock_May2019
 
         public async Task GuildAvailableAsync(SocketGuild guild)
         {
+            _EventLog("Guild has become available");
             if (guild.Id == _GuildID)
             {
                 //var mchannel = guild.Channels.Where(x => x.Id == _Channel).First();

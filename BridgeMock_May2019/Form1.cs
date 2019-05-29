@@ -69,7 +69,22 @@ namespace BridgeMock_May2019
                 this.Invoke(d, new object[] { text });
             }
         }
-
+        public void DiscordLog(string text)
+        {
+            if (!richTextBox1.InvokeRequired)
+            {
+                richTextBox2.SelectionStart = richTextBox1.TextLength;
+                richTextBox2.SelectionLength = 0;
+                richTextBox2.SelectionColor = System.Drawing.Color.Black;
+                richTextBox2.AppendText(text + "\r\n");
+                richTextBox2.SelectionColor = System.Drawing.Color.Black;
+            }
+            else
+            {
+                TextBoxDelegate d = new TextBoxDelegate(DiscordLog);
+                this.Invoke(d, new object[] { text });
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             backgroundWorker1.RunWorkerAsync();
@@ -78,7 +93,7 @@ namespace BridgeMock_May2019
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             bridge = new BridgeService(InputLog, OutputLog, EventLog);
-            DiscordService discordService = new DiscordService(bridge);
+            DiscordService discordService = new DiscordService(bridge, DiscordLog);
             discordService.MainAsync().GetAwaiter();
             
             bridge.StartBridge();
