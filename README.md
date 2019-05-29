@@ -39,7 +39,8 @@
 
 ### Configure a ULine for the Bridge Service. 
 In my example, I am using port 7001.
-In unrealircd.conf (
+
+**unrealircd.conf**
 ```
 listen { 
 	ip *;
