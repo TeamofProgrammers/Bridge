@@ -15,4 +15,5 @@
   * We could send them a PM from the bot, notifying them they have a message on irc...
   * Or we can inform the irc user sending the message that this is not supported.
   * It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
-  
+* Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
+  * I would like for it to show netsplit when the service is killed/rejoined. 
