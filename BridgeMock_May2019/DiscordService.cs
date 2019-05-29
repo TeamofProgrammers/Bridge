@@ -11,20 +11,25 @@ using System.Reflection;
 
 namespace BridgeMock_May2019
 {
+    class ChannelLink
+    {
+        public ulong DiscordChannelId { get; set; }
+        public string IrcChannelName { get; set; }
+    }
     class DiscordService
     {
         private BridgeService _bridge;
         private readonly DiscordSocketClient _client;
         private string _Token;
         private ulong _GuildID;
-        private ulong _Channel;
+        private List<ChannelLink> _ChannelLinks;
         public DiscordService(BridgeService bridge)
         {
+            _ChannelLinks = new List<ChannelLink>();
             ReadConfig();
             _bridge = bridge;
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
-            //_MainGuild = _client.Guilds.Where(x => x.Id == _GuildID).First();
             _client.GuildAvailable += GuildAvailableAsync;
         }
 
@@ -32,12 +37,19 @@ namespace BridgeMock_May2019
         {
             if (guild.Id == _GuildID)
             {
-                var mchannel = guild.Channels.Where(x => x.Id == _Channel).First();
-                var users = mchannel.Users;
-                foreach(var user in users)
+                //var mchannel = guild.Channels.Where(x => x.Id == _Channel).First();
+                foreach (var channel in guild.Channels)
                 {
-                    _bridge.RegisterNick(user.Username);
-                    _bridge.JoinChannel(user.Username, "#bot-test");
+                    var link = _ChannelLinks.Where(x => x.DiscordChannelId == channel.Id).FirstOrDefault();
+                    if (link != null)
+                    {
+                        var users = channel.Users;
+                        foreach (var user in users)
+                        {
+                            _bridge.RegisterNick(user.Username);
+                            _bridge.JoinChannel(user.Username, link.IrcChannelName);
+                        }
+                    }
                 }
             }
         }
@@ -45,9 +57,9 @@ namespace BridgeMock_May2019
         {
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
-
-            if (message.Channel.Name.ToLower() == "bot-test")
-                _bridge.SendMessage(message.Author.Username, message.Content, "#bot-test");
+            var query = _ChannelLinks.Where(x => x.DiscordChannelId == message.Channel.Id).FirstOrDefault();
+            if (query != null) 
+                _bridge.SendMessage(message.Author.Username, message.Content, query.IrcChannelName);
         }
 
         public bool ReadConfig()
@@ -62,7 +74,16 @@ namespace BridgeMock_May2019
                 XmlNode disc = doc.DocumentElement.SelectSingleNode("DiscordServer");
                 _Token = disc["Token"].InnerText;
                 _GuildID = ulong.Parse(disc["GuildID"].InnerText);
-                _Channel = 388908063014387714;
+                
+                foreach(XmlNode node in disc["ChannelMapping"].ChildNodes)
+                {
+                    ChannelLink link = new ChannelLink();
+                    link.DiscordChannelId = ulong.Parse(node["Discord"].InnerText);
+                    link.IrcChannelName = node["IRC"].InnerText;
+                    _ChannelLinks.Add(link);
+                }
+
+
                 return true;
             }
             return false;
