@@ -1,28 +1,28 @@
 # Bridge
 ## ToDo:
-* Handle Usernames With Spaces
-* General Input / Output validation. 
-  * Discord can send a new line with alt+enter. How does irc handle this? 
-* What happens when User gets kicked from IRC, but still are in discord?
-* What happens when user changes nick on discord
-  * Currently doesn't matter, as I am looking at their username and ignoring thier chosen nickname.
-* What happens when a user is @ referenced in discord? Do we translate that on irc?
-* What happens when a user is highlighted in irc? do we highlight them in discord?
-* What happens with nickname collisions?
-  * Need to implement a prefix/ suffix system. 
-* Should we ignore other bots?
-* What happens when a discord user receives a private message on irc?
-  * We could send them a PM from the bot, notifying them they have a message on irc...
-  * Or we can inform the irc user sending the message that this is not supported.
-  * It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
-* Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
-  * I would like for it to show netsplit when the service is killed/rejoined. 
-* Rename from BridgeMock_May2019 to something less... boring. 
-* Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
-* Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
-* Add SSL/TLS to the connection.
-* Allow for Hostnames to be used in the ServerHost section. 
-* Put everything back in bin/debug, as things are just becoming messy now. 
+- [ ] Handle Usernames With Spaces
+- [ ] General Input / Output validation. 
+  - [ ] Discord can send a new line with alt+enter. How does irc handle this? 
+- [ ] What happens when User gets kicked from IRC, but still are in discord?
+- [ ] What happens when user changes nick on discord
+  - [ ] Currently doesn't matter, as I am looking at their username and ignoring thier chosen nickname.
+- [ ] What happens when a user is @ referenced in discord? Do we translate that on irc?
+- [ ] What happens when a user is highlighted in irc? do we highlight them in discord?
+- [ ] What happens with nickname collisions?
+  - [ ] Need to implement a prefix/ suffix system. 
+- [ ] Should we ignore other bots?
+- [ ] What happens when a discord user receives a private message on irc?
+  - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
+  - [ ] Or we can inform the irc user sending the message that this is not supported.
+  - [ ] It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
+- [ ] Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
+  - [ ] I would like for it to show netsplit when the service is killed/rejoined. 
+- [ ] Rename from BridgeMock_May2019 to something less... boring. 
+- [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
+- [ ] Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
+- [ ] Add SSL/TLS to the connection.
+- [ ] Allow for Hostnames to be used in the ServerHost section. 
+- [ ] Put everything back in bin/debug, as things are just becoming messy now. 
 
 ## Setup
 ### Requirements
