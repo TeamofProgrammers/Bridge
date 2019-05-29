@@ -20,7 +20,7 @@ namespace BridgeMock_May2019
         private BridgeService _bridge;
         private readonly DiscordSocketClient _client;
         private string _Token;
-        private ulong _GuildID;
+        private ulong _GuildId;
         private List<ChannelLink> _ChannelLinks;
         static Action<string> _EventLog;
 
@@ -28,6 +28,14 @@ namespace BridgeMock_May2019
         {
             _EventLog("Channel Message Received");
             _EventLog($"{e.ChannelMessage.User} {e.ChannelMessage.Channel} {e.ChannelMessage.Message}");
+            var link = _ChannelLinks.Where(x => x.IrcChannelName.ToUpper() == e.ChannelMessage.Channel.ToUpper()).FirstOrDefault();
+            if (null != link)
+            {
+                var guild = _client.GetGuild(_GuildId);
+                var channel = guild.GetTextChannel(link.DiscordChannelId);
+                string message = $"<{e.ChannelMessage.User}> {e.ChannelMessage.Message}";
+                channel.SendMessageAsync(message);
+            }
         }
         public DiscordService(BridgeService bridge, Action<string> EventLog)
         {
@@ -44,7 +52,7 @@ namespace BridgeMock_May2019
         public async Task GuildAvailableAsync(SocketGuild guild)
         {
             _EventLog("Guild has become available");
-            if (guild.Id == _GuildID)
+            if (guild.Id == _GuildId)
             {
                 //var mchannel = guild.Channels.Where(x => x.Id == _Channel).First();
                 foreach (var channel in guild.Channels)
@@ -67,7 +75,7 @@ namespace BridgeMock_May2019
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
             var query = _ChannelLinks.Where(x => x.DiscordChannelId == message.Channel.Id).FirstOrDefault();
-            if (query != null) 
+            if (query != null)
                 _bridge.SendMessage(message.Author.Username, message.Content, query.IrcChannelName);
         }
 
@@ -82,7 +90,7 @@ namespace BridgeMock_May2019
                 doc.Load(config[0].FullName);
                 XmlNode disc = doc.DocumentElement.SelectSingleNode("DiscordServer");
                 _Token = disc["Token"].InnerText;
-                _GuildID = ulong.Parse(disc["GuildID"].InnerText);
+                _GuildId = ulong.Parse(disc["GuildID"].InnerText);
                 
                 foreach(XmlNode node in disc["ChannelMapping"].ChildNodes)
                 {

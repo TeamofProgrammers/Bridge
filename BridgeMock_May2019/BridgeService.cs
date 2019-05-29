@@ -164,6 +164,20 @@ namespace BridgeMock_May2019
             writer.Flush();
             OutputLog(line);
         }
+        private void ChannelMessageReceived(string input)
+        {
+            string[] tokens = input.Split(' ');
+            EventHandler<ChannelMessageEventArgs> handler = OnChannelMessage;
+            if (null != handler)
+            {
+                ChannelMessageEvent channelMessage = new ChannelMessageEvent();
+                channelMessage.User = tokens[0].Split(':')[1];
+                channelMessage.Channel = tokens[2];
+                string content = input.Split(new[] { ':' },3)[2];
+                channelMessage.Message = content;
+                handler(this, new ChannelMessageEventArgs(channelMessage));
+            }
+        }
         private void BridgeMain()
         {
             string input;
@@ -184,16 +198,7 @@ namespace BridgeMock_May2019
                         case "PRIVMSG":
                             // Example: 
                             // :shiftybit PRIVMSG #top :test
-                            EventHandler<ChannelMessageEventArgs> handler = OnChannelMessage;
-                            if (null != handler)
-                            {
-                                ChannelMessageEvent channelMessage = new ChannelMessageEvent();
-                                channelMessage.User = tokens[0];
-                                channelMessage.Channel = tokens[2];
-                                string content = input.Split(':')[2];
-                                channelMessage.Message = content;
-                                handler(this, new ChannelMessageEventArgs(channelMessage));
-                            }
+                            ChannelMessageReceived(input);
                             break;
                         default:
                             break;
