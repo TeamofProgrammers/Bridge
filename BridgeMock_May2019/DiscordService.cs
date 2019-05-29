@@ -24,9 +24,10 @@ namespace BridgeMock_May2019
         private List<ChannelLink> _ChannelLinks;
         static Action<string> _EventLog;
 
-        private void IrcChannelMessage(object s, EventArgs e)
+        private void IrcChannelMessage(object s, ChannelMessageEventArgs e)
         {
             _EventLog("Channel Message Received");
+            _EventLog($"{e.ChannelMessage.User} {e.ChannelMessage.Channel} {e.ChannelMessage.Message}");
         }
         public DiscordService(BridgeService bridge, Action<string> EventLog)
         {
@@ -34,7 +35,7 @@ namespace BridgeMock_May2019
             _ChannelLinks = new List<ChannelLink>();
             ReadConfig();
             _bridge = bridge;
-            _bridge.OnChannelMessage += new EventHandler(IrcChannelMessage);
+            _bridge.OnChannelMessage += new EventHandler<ChannelMessageEventArgs>(IrcChannelMessage);
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;

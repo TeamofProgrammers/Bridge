@@ -51,7 +51,7 @@ namespace BridgeMock_May2019
         static Action<string> OutputLog;
         static Action<string> EventLog;
         private List<BridgeUser> _BridgeUsers;
-        public event EventHandler OnChannelMessage;
+        public event EventHandler<ChannelMessageEventArgs> OnChannelMessage;
         private static Random r = new Random();
         public BridgeService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog)
         {
@@ -176,13 +176,24 @@ namespace BridgeMock_May2019
                     if (tokens[0].ToUpper() == "PING")
                     {
                         write("PONG " + tokens[1]);
+                        
                     }
 
                     switch (tokens[1].ToUpper())
                     {
                         case "PRIVMSG":
-                            EventHandler handler = OnChannelMessage;
-                            if (null != handler) handler(this, EventArgs.Empty);
+                            // Example: 
+                            // :shiftybit PRIVMSG #top :test
+                            EventHandler<ChannelMessageEventArgs> handler = OnChannelMessage;
+                            if (null != handler)
+                            {
+                                ChannelMessageEvent channelMessage = new ChannelMessageEvent();
+                                channelMessage.User = tokens[0];
+                                channelMessage.Channel = tokens[2];
+                                string content = input.Split(':')[2];
+                                channelMessage.Message = content;
+                                handler(this, new ChannelMessageEventArgs(channelMessage));
+                            }
                             break;
                         default:
                             break;
