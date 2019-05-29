@@ -49,14 +49,16 @@ namespace BridgeMock_May2019
         private StreamWriter writer;
         static Action<string> InputLog;
         static Action<string> OutputLog;
+        static Action<string> EventLog;
         private List<BridgeUser> _BridgeUsers;
-
+        public event EventHandler OnChannelMessage;
         private static Random r = new Random();
-        public BridgeService(Action<string> inputLog, Action<string> outputLog)
+        public BridgeService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog)
         {
             BridgeConfig.ReadConfig();
             InputLog = inputLog;
             OutputLog = outputLog;
+            EventLog = eventLog;
             _BridgeUsers = new List<BridgeUser>();
         }
 
@@ -112,7 +114,7 @@ namespace BridgeMock_May2019
             }
             else
             {
-                OutputLog($"Error: {nick} is already registered ");
+               EventLog($"Error: {nick} is already registered ");
             }
 
         }
@@ -125,7 +127,7 @@ namespace BridgeMock_May2019
             var query = _BridgeUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower()));
             if(query.ToList().Count == 0)
             {
-                OutputLog($"Error: {oldNick} is not a valid user");
+                EventLog($"Error: {oldNick} is not a valid user");
                 return;
             }
             BridgeUser user = query.First();
@@ -162,6 +164,33 @@ namespace BridgeMock_May2019
             writer.Flush();
             OutputLog(line);
         }
+        private void BridgeMain()
+        {
+            string input;
+            while (true)
+            {
+                while ((input = reader.ReadLine()) != null)
+                {
+                    InputLog(input);
+                    string[] tokens = input.Split(' ');
+                    if (tokens[0].ToUpper() == "PING")
+                    {
+                        write("PONG " + tokens[1]);
+                    }
+
+                    switch (tokens[1].ToUpper())
+                    {
+                        case "PRIVMSG":
+                            EventHandler handler = OnChannelMessage;
+                            if (null != handler) handler(this, EventArgs.Empty);
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+            }
+        }
         public void StartBridge()
         {
             tcpClient = new TcpClient(BridgeConfig.ServerHost,BridgeConfig.ServerPort);
@@ -174,28 +203,7 @@ namespace BridgeMock_May2019
             write($"PROTOCTL SID={BridgeConfig.ServerIdentifier}");
             write("SERVER bridgeserv.teamofprogrammers.com 1 :change me");
             write($":{BridgeConfig.ServerIdentifier} EOS");
-            string input;
-            while (true)
-            {
-                while((input = reader.ReadLine()) != null)
-                {
-                    InputLog(input);
-                    string[] tokens = input.Split(' ');
-                    if(tokens[0].ToUpper() == "PING")
-                    {
-                        write("PONG " + tokens[1]);
-                    }
-
-                    switch (tokens[1])
-                    {
-                        case "001":
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-            }
+            BridgeMain();
         }
     }
 }

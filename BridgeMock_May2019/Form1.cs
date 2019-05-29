@@ -15,8 +15,7 @@ namespace BridgeMock_May2019
     public partial class Form1 : Form
     {
         private BridgeService bridge;
-        //delegate void OutputDelegate(string text);
-        delegate void InputDelegate(string text);
+        delegate void TextBoxDelegate(string text);
         public Form1()
         {
             InitializeComponent();
@@ -33,7 +32,7 @@ namespace BridgeMock_May2019
            }
              else
             {
-                InputDelegate d = new InputDelegate(InputLog);
+                TextBoxDelegate d = new TextBoxDelegate(InputLog);
                 this.Invoke(d, new object[] { text });
             }
         }
@@ -50,21 +49,35 @@ namespace BridgeMock_May2019
             }
             else
             {
-                InputDelegate d = new InputDelegate(OutputLog);
+                TextBoxDelegate d = new TextBoxDelegate(OutputLog);
+                this.Invoke(d, new object[] { text });
+            }
+        }
+        public void EventLog(string text)
+        {
+            if (!richTextBox1.InvokeRequired)
+            {
+                richTextBox1.SelectionStart = richTextBox1.TextLength;
+                richTextBox1.SelectionLength = 0;
+                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+                richTextBox1.AppendText(text + "\r\n");
+                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+            }
+            else
+            {
+                TextBoxDelegate d = new TextBoxDelegate(InputLog);
                 this.Invoke(d, new object[] { text });
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //System.Net.IPHostEntry host = System.Net.Dns.GetHostEntry("192.168.1.6");
             backgroundWorker1.RunWorkerAsync();
-
         }
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            bridge = new BridgeService(InputLog, OutputLog);
+            bridge = new BridgeService(InputLog, OutputLog, EventLog);
             DiscordService discordService = new DiscordService(bridge);
             discordService.MainAsync().GetAwaiter();
             
