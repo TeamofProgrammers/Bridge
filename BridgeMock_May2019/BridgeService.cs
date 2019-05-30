@@ -3,38 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Net.Sockets;
-using System.Configuration;
-using System.Reflection;
-using System.Xml;
+
 
 namespace BridgeMock_May2019
 {
-    static class BridgeConfig
-    {
-        public static string ServerHost { get; set; }
-        public static int ServerPort { get; set; }
-        public static string ServerPassword { get; set; }
-        public static string ServerIdentifier { get; set; }
-
-        public static bool ReadConfig()
-        {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            DirectoryInfo path = new FileInfo(location.AbsolutePath).Directory;
-            FileInfo[] config = path.GetFiles("config.xml");
-            if(config.Length != 0)
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(config[0].FullName);
-                XmlNode irc = doc.DocumentElement.SelectSingleNode("IRCServer");
-                ServerHost = irc["ServerHost"].InnerText;
-                ServerPort = int.Parse(irc["ServerPort"].InnerText);
-                ServerPassword = irc["ServerPassword"].InnerText;
-                ServerIdentifier = irc["ServerIdentifier"].InnerText;
-                return true;
-            }
-            return false;
-        }
-    }
     class BridgeUser
     {
         public string UID { get; set; }
@@ -209,15 +181,15 @@ namespace BridgeMock_May2019
         }
         public void StartBridge()
         {
-            tcpClient = new TcpClient(BridgeConfig.ServerHost,BridgeConfig.ServerPort);
+            tcpClient = new TcpClient(BridgeConfig.UplinkHost,BridgeConfig.UplinkPort);
             ns = tcpClient.GetStream();
             reader = new StreamReader(ns);
             writer = new StreamWriter(ns);
-            write($"PASS {BridgeConfig.ServerPassword}");
+            write($"PASS {BridgeConfig.UplinkPassword}");
             write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
-            write("PROTOCTL EAUTH=bridgeserv.teamofprogrammers.com");
+            write($"PROTOCTL EAUTH={BridgeConfig.ServerName}");
             write($"PROTOCTL SID={BridgeConfig.ServerIdentifier}");
-            write("SERVER bridgeserv.teamofprogrammers.com 1 :change me");
+            write($"SERVER {BridgeConfig.ServerName} 1 :{BridgeConfig.ServerDescription}");
             write($":{BridgeConfig.ServerIdentifier} EOS");
             BridgeMain();
         }
