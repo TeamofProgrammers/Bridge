@@ -87,7 +87,7 @@ ulines {
 		<ServerDescription>Discord Bridge</ServerDescription>
 	</IRCServer>
 	<DiscordServer>
-		<Token>IRC Token Here</Token>
+		<Token>Discord Token Here</Token>
 		<GuildID>294590221843038209</GuildID>
 		<ChannelMapping>
 			<Channel>
