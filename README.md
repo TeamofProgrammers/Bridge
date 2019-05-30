@@ -9,8 +9,8 @@
 - [ ] What happens when a user is @ referenced in discord? Do we translate that on irc?
 - [ ] What happens when a user is highlighted in irc? do we highlight them in discord?
 - [ ] What happens with nickname collisions?
-  - [ ] Need to implement a prefix/ suffix system. 
-- [ ] Should we ignore other bots?
+  - [ ] Implement a prefix / suffix for nick names. 
+- [ ] Add option to ignore discord bots.
 - [ ] What happens when a discord user receives a private message on irc?
   - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
   - [ ] Or we can inform the irc user sending the message that this is not supported.
@@ -20,10 +20,10 @@
 - [ ] Rename from BridgeMock_May2019 to something less... boring. 
 - [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
 - [ ] Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
-- [ ] Add SSL/TLS to the connection.
+- [ ] Add SSL/TLS options for connection.
 - [ ] Allow for Hostnames to be used in the ServerHost section. 
-- [ ] Put everything back in bin/debug, as things are just becoming messy now. 
-
+- [X] Put everything back in bin/debug, as things are just becoming messy now. 
+- [ ] Remove the Scaffolding / Test GUI. (After Everything is working)
 ## Setup
 ### Requirements
 * UnrealIRCD - This product not tested on other animals. 
@@ -79,13 +79,15 @@ ulines {
 <?xml version="1.0" encoding="utf-8" ?>
 <BridgeConfig>
 	<IRCServer>
-		<ServerHost>192.168.1.8</ServerHost>
-		<ServerPort>7001</ServerPort>
-		<ServerPassword>GoldenRetriever</ServerPassword>
-		<ServerIdentifier>00C</ServerIdentifier>
+		<UplinkHost>127.0.0.1</UplinkHost>
+		<UplinkPort>5555</UplinkPort>
+		<UplinkPassword>GoldenRetriever</UplinkPassword>
+		<ServerIdentifier>00D</ServerIdentifier>
+		<ServerName>cloud.teamofprogrammers.com</ServerName>
+		<ServerDescription>Discord Bridge</ServerDescription>
 	</IRCServer>
 	<DiscordServer>
-		<Token>Discord Token Goes Here</Token>
+		<Token>IRC Token Here</Token>
 		<GuildID>294590221843038209</GuildID>
 		<ChannelMapping>
 			<Channel>
