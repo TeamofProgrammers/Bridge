@@ -132,9 +132,16 @@ namespace BridgeMock_May2019
         }
         private void write(string line)
         {
-            writer.WriteLine(line);
-            writer.Flush();
-            OutputLog(line);
+            try
+            {
+                writer.WriteLine(line);
+                writer.Flush();
+                OutputLog(line);
+            } 
+            catch (System.IO.IOException e) {
+                EventLog($"Error: Disconnected from {BridgeConfig.UplinkHost}");
+            }
+            
         }
         private void ChannelMessageReceived(string input)
         {
@@ -153,31 +160,26 @@ namespace BridgeMock_May2019
         private void BridgeMain()
         {
             string input;
-            while (true)
+            while ((input = reader.ReadLine()) != null)
             {
-                while ((input = reader.ReadLine()) != null)
+                InputLog(input);
+                string[] tokens = input.Split(' ');
+                if (tokens[0].ToUpper() == "PING")
                 {
-                    InputLog(input);
-                    string[] tokens = input.Split(' ');
-                    if (tokens[0].ToUpper() == "PING")
-                    {
-                        write("PONG " + tokens[1]);
-                        
-                    }
-
-                    switch (tokens[1].ToUpper())
-                    {
-                        case "PRIVMSG":
-                            // Example: 
-                            // :shiftybit PRIVMSG #top :test
-                            ChannelMessageReceived(input);
-                            break;
-                        default:
-                            break;
-                    }
-
+                    write("PONG " + tokens[1]);
+                }
+                switch (tokens[1].ToUpper())
+                {
+                    case "PRIVMSG":
+                        // Example: 
+                        // :shiftybit PRIVMSG #top :test
+                        ChannelMessageReceived(input);
+                        break;
+                    default:
+                        break;
                 }
             }
+            EventLog($"BridgeMain() Terminated. Connection to {BridgeConfig.UplinkHost} has been lost. ");
         }
         public void StartBridge()
         {
