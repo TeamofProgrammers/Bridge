@@ -221,14 +221,19 @@
   <ItemGroup>
     <Compile Include="BridgeConfig.cs" />
     <Compile Include="BridgeService.cs" />
+    <Compile Include="Config\ChannelLink.cs" />
+    <Compile Include="Config\DiscordLinkConfig.cs" />
+    <Compile Include="Config\IrcLinkConfig.cs" />
     <Compile Include="DiscordService.cs" />
+    <Compile Include="Events\DiscordEvents.cs" />
+    <Compile Include="Glue.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="IrcEvents.cs" />
+    <Compile Include="Events\IrcEvents.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Main.resx">

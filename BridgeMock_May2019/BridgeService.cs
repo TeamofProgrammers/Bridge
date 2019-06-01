@@ -7,7 +7,7 @@ using System.Net.Sockets;
 
 namespace BridgeMock_May2019
 {
-    class BridgeUser
+    class IrcUser
     {
         public string UID { get; set; }
         public string Nick { get; set; }
@@ -22,16 +22,17 @@ namespace BridgeMock_May2019
         static Action<string> InputLog;
         static Action<string> OutputLog;
         static Action<string> EventLog;
-        private List<BridgeUser> _BridgeUsers;
-        public event EventHandler<ChannelMessageEventArgs> OnChannelMessage;
+        private List<IrcUser> IrcUsers;
+        private IrcLinkConfig Config;
+        public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
         private static Random r = new Random();
-        public BridgeService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog)
+        public BridgeService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
         {
-            BridgeConfig.ReadConfig();
             InputLog = inputLog;
             OutputLog = outputLog;
             EventLog = eventLog;
-            _BridgeUsers = new List<BridgeUser>();
+            IrcUsers = new List<IrcUser>();
+            this.Config = Config;
         }
 
         public static string RandomString(int length)
@@ -62,7 +63,7 @@ namespace BridgeMock_May2019
             // Real IP address // This is the ip address, you can use *
             // : realname   // RealName appears after the colon, because this can have spaces in it.
             nick = nick.Trim();
-            var query = _BridgeUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
             if(query.ToList().Count == 0)
             {
                 int hopcount = 0;
@@ -75,14 +76,14 @@ namespace BridgeMock_May2019
                 string vhost = "*";
                 string ipCloak = "bcloaked"; // bridge cloak
                 string ipAddress = "*";
-                string mstr = $":{BridgeConfig.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
+                string mstr = $":{Config.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
 
                 write(mstr);
-                var bridgeUser = new BridgeUser();
+                var bridgeUser = new IrcUser();
                 bridgeUser.UID = uid;
                 bridgeUser.UserName = username;
                 bridgeUser.Nick = nick;
-                _BridgeUsers.Add(bridgeUser);
+                IrcUsers.Add(bridgeUser);
             }
             else
             {
@@ -96,13 +97,13 @@ namespace BridgeMock_May2019
             //:00257TR0R NICK bitshift 1559074834
             //:00257TR0R NICK shiftybit 1559074836
 
-            var query = _BridgeUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower()));
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower()));
             if(query.ToList().Count == 0)
             {
                 EventLog($"Error: {oldNick} is not a valid user");
                 return;
             }
-            BridgeUser user = query.First();
+            IrcUser user = query.First();
             string mstr = $":{user.UID} NICK {nick} 0";
             write(mstr);
             user.Nick = nick;
@@ -138,23 +139,23 @@ namespace BridgeMock_May2019
                 writer.Flush();
                 OutputLog(line);
             } 
-            catch (System.IO.IOException e) {
-                EventLog($"Error: Disconnected from {BridgeConfig.UplinkHost}");
+            catch (System.IO.IOException) {
+                EventLog($"Error: Disconnected from {Config.UplinkHost}");
             }
             
         }
         private void ChannelMessageReceived(string input)
         {
             string[] tokens = input.Split(' ');
-            EventHandler<ChannelMessageEventArgs> handler = OnChannelMessage;
+            EventHandler<IrcMessageEventArgs> handler = OnChannelMessage;
             if (null != handler)
             {
-                ChannelMessageEvent channelMessage = new ChannelMessageEvent();
+                IrcMessageEvent channelMessage = new IrcMessageEvent();
                 channelMessage.User = tokens[0].Split(':')[1];
                 channelMessage.Channel = tokens[2];
                 string content = input.Split(new[] { ':' },3)[2];
                 channelMessage.Message = content;
-                handler(this, new ChannelMessageEventArgs(channelMessage));
+                handler(this, new IrcMessageEventArgs(channelMessage));
             }
         }
         private void BridgeMain()
@@ -179,20 +180,20 @@ namespace BridgeMock_May2019
                         break;
                 }
             }
-            EventLog($"BridgeMain() Terminated. Connection to {BridgeConfig.UplinkHost} has been lost. ");
+            EventLog($"BridgeMain() Terminated. Connection to {Config.UplinkHost} has been lost. ");
         }
         public void StartBridge()
         {
-            tcpClient = new TcpClient(BridgeConfig.UplinkHost,BridgeConfig.UplinkPort);
+            tcpClient = new TcpClient(Config.UplinkHost,Config.UplinkPort);
             ns = tcpClient.GetStream();
             reader = new StreamReader(ns);
             writer = new StreamWriter(ns);
-            write($"PASS {BridgeConfig.UplinkPassword}");
+            write($"PASS {Config.UplinkPassword}");
             write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
-            write($"PROTOCTL EAUTH={BridgeConfig.ServerName}");
-            write($"PROTOCTL SID={BridgeConfig.ServerIdentifier}");
-            write($"SERVER {BridgeConfig.ServerName} 1 :{BridgeConfig.ServerDescription}");
-            write($":{BridgeConfig.ServerIdentifier} EOS");
+            write($"PROTOCTL EAUTH={Config.ServerName}");
+            write($"PROTOCTL SID={Config.ServerIdentifier}");
+            write($"SERVER {Config.ServerName} 1 :{Config.ServerDescription}");
+            write($":{Config.ServerIdentifier} EOS");
             BridgeMain();
         }
     }

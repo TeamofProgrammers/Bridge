@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
 
 
 namespace BridgeMock_May2019
 {
     public partial class Main : Form
     {
-        private BridgeService bridge;
+        private BridgeService IrcLink;
+        private DiscordService DiscordLink;
+        private Glue glue;
         delegate void TextBoxDelegate(string text);
         public Main()
         {
@@ -26,9 +22,9 @@ namespace BridgeMock_May2019
             if (!richTextBox1.InvokeRequired) { 
                 richTextBox1.SelectionStart = richTextBox1.TextLength;
                 richTextBox1.SelectionLength = 0;
-                richTextBox1.SelectionColor = System.Drawing.Color.DarkRed;
+                richTextBox1.SelectionColor = Color.DarkRed;
                 richTextBox1.AppendText(text + "\r\n");
-                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+                richTextBox1.SelectionColor = Color.Black;
            }
              else
             {
@@ -43,9 +39,9 @@ namespace BridgeMock_May2019
             {
                 richTextBox1.SelectionStart = richTextBox1.TextLength;
                 richTextBox1.SelectionLength = 0;
-                richTextBox1.SelectionColor = System.Drawing.Color.DarkBlue;
+                richTextBox1.SelectionColor = Color.DarkBlue;
                 richTextBox1.AppendText(text + "\r\n");
-                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+                richTextBox1.SelectionColor = Color.Black;
             }
             else
             {
@@ -59,9 +55,9 @@ namespace BridgeMock_May2019
             {
                 richTextBox1.SelectionStart = richTextBox1.TextLength;
                 richTextBox1.SelectionLength = 0;
-                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+                richTextBox1.SelectionColor = Color.Black;
                 richTextBox1.AppendText(text + "\r\n");
-                richTextBox1.SelectionColor = System.Drawing.Color.Black;
+                richTextBox1.SelectionColor = Color.Black;
             }
             else
             {
@@ -75,9 +71,9 @@ namespace BridgeMock_May2019
             {
                 richTextBox2.SelectionStart = richTextBox1.TextLength;
                 richTextBox2.SelectionLength = 0;
-                richTextBox2.SelectionColor = System.Drawing.Color.Black;
+                richTextBox2.SelectionColor = Color.Black;
                 richTextBox2.AppendText(text + "\r\n");
-                richTextBox2.SelectionColor = System.Drawing.Color.Black;
+                richTextBox2.SelectionColor = Color.Black;
             }
             else
             {
@@ -92,47 +88,55 @@ namespace BridgeMock_May2019
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            bridge = new BridgeService(InputLog, OutputLog, EventLog);
-            DiscordService discordService = new DiscordService(bridge, DiscordLog);
-            discordService.MainAsync().GetAwaiter();
+            BridgeConfig config = new BridgeConfig();
+            IrcLink = new BridgeService(InputLog, OutputLog, EventLog, config.Irc);
+            DiscordLink = new DiscordService(DiscordLog, config.Discord);
+            glue = new Glue(IrcLink, DiscordLink, config);
+
+            DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
+            DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
+            IrcLink.OnChannelMessage += glue.IrcChannelMessage;
             
-            bridge.StartBridge();
+
+            // Start the Async Processing
+            DiscordLink.MainAsync().GetAwaiter();
+            IrcLink.StartBridge(); // Sort of Async.. Fix this later
         }
 
         private void BtnSend_Click(object sender, EventArgs e)
         {
-            bridge.SendMessage(txtUserName.Text, txtMessage.Text, txtChannel.Text);
+            IrcLink.SendMessage(txtUserName.Text, txtMessage.Text, txtChannel.Text);
             txtMessage.Clear();
         }
 
         private void BtnRegister_Click(object sender, EventArgs e)
         {
-            bridge.RegisterNick(txtUserName.Text);
+            IrcLink.RegisterNick(txtUserName.Text);
         }
 
         private void TxtUserName_KeyDown(object sender, KeyEventArgs e) {
             if(e.KeyCode == Keys.Enter)
             {
-                bridge.RegisterNick(txtUserName.Text);
+                IrcLink.RegisterNick(txtUserName.Text);
             }
         }
 
         private void BtnJoin_Click(object sender, EventArgs e)
         {
-            bridge.JoinChannel(txtUserName.Text, txtChannel.Text);
+            IrcLink.JoinChannel(txtUserName.Text, txtChannel.Text);
         }
 
         private void TxtChannel_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                bridge.JoinChannel(txtUserName.Text, txtChannel.Text);
+                IrcLink.JoinChannel(txtUserName.Text, txtChannel.Text);
             }
         }
 
         private void BtnAction_Click(object sender, EventArgs e)
         {
-            bridge.SendAction(txtUserName.Text, txtMessage.Text, txtChannel.Text);
+            IrcLink.SendAction(txtUserName.Text, txtMessage.Text, txtChannel.Text);
             txtMessage.Clear();
         }
 
@@ -145,14 +149,14 @@ namespace BridgeMock_May2019
         {
             if (e.KeyCode == Keys.Enter)
             {
-                bridge.SendMessage(txtUserName.Text, txtMessage.Text, txtChannel.Text);
+                IrcLink.SendMessage(txtUserName.Text, txtMessage.Text, txtChannel.Text);
                 txtMessage.Clear();
             }
         }
 
         private void BtnChangeNick_Click(object sender, EventArgs e)
         {
-            bridge.ChangeNick(txtUserName.Text, txtChangeNick.Text);
+            IrcLink.ChangeNick(txtUserName.Text, txtChangeNick.Text);
         }
 
     }
