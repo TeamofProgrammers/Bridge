@@ -1,6 +1,6 @@
 ﻿namespace BridgeMock_May2019
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// Required designer variable.

@@ -12,11 +12,11 @@ using System.Configuration;
 
 namespace BridgeMock_May2019
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
         private BridgeService bridge;
         delegate void TextBoxDelegate(string text);
-        public Form1()
+        public Main()
         {
             InitializeComponent();
         }
