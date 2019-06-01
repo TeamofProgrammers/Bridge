@@ -95,6 +95,7 @@ namespace BridgeMock_May2019
 
             DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
+            DiscordLink.OnUserUpdated += glue.DiscordUserUpdated;
             IrcLink.OnChannelMessage += glue.IrcChannelMessage;
             
 

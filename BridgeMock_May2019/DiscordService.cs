@@ -14,6 +14,7 @@ namespace BridgeMock_May2019
         static Action<string> _EventLog;
         public event EventHandler<DiscordMessageEventArgs> OnChannelMessage;
         public event EventHandler<DiscordGuildConnectedEventArgs> OnGuildConnected;
+        public event EventHandler<DiscordUserUpdatedEventArgs> OnUserUpdated;
         private DiscordLinkConfig Config;
         public DiscordService(Action<string> EventLog, DiscordLinkConfig Config)
         {
@@ -28,10 +29,14 @@ namespace BridgeMock_May2019
 
         private async Task UserUpdatedAsync(SocketGuildUser previous, SocketGuildUser current)
         {
-            UserStatus previousStat = previous.Status;
-            UserStatus currentStat = current.Status;
+            EventHandler<DiscordUserUpdatedEventArgs> handler = OnUserUpdated;
+            if(null != handler)
+            {
+                handler(this, new DiscordUserUpdatedEventArgs(previous, current));
+            }
             _EventLog("User Updated");
         }
+
         private async Task GuildAvailableAsync(SocketGuild guild)
         {
             _EventLog("Guild has become available");

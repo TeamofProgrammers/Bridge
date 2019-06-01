@@ -24,4 +24,17 @@ namespace BridgeMock_May2019
         }
         public SocketGuild Guild { get { return guild; } }
     }
+
+    public class DiscordUserUpdatedEventArgs : EventArgs
+    {
+        private readonly SocketGuildUser previous, current;
+
+        public DiscordUserUpdatedEventArgs(SocketGuildUser previous, SocketGuildUser current)
+        {
+            this.previous = previous;
+            this.current = current;
+        }
+        public SocketGuildUser Previous {  get { return previous; } }
+        public SocketGuildUser Current {  get { return current; } }
+    }
 }

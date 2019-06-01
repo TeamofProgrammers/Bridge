@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Discord;
 
 namespace BridgeMock_May2019
 {
@@ -52,6 +53,25 @@ namespace BridgeMock_May2019
                         }
                     }
                 }
+            }
+        }
+        private bool DiscordUserConsideredOnline(UserStatus status)
+        {
+            if(status == UserStatus.AFK || status == UserStatus.Idle || status == UserStatus.Online)
+            {
+                return true;
+            }
+            return false;
+        }
+        public void DiscordUserUpdated(object s, DiscordUserUpdatedEventArgs e)
+        {
+            if(!DiscordUserConsideredOnline(e.Previous.Status) && DiscordUserConsideredOnline(e.Current.Status))
+            {
+                IrcLink.SetAway(e.Current.Username, false);
+            }
+            else if(DiscordUserConsideredOnline(e.Previous.Status) && !DiscordUserConsideredOnline(e.Current.Status))
+            {
+                IrcLink.SetAway(e.Current.Username, true);
             }
         }
     }
