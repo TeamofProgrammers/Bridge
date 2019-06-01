@@ -55,6 +55,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.btnAway = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabIrc.SuspendLayout();
@@ -112,6 +114,8 @@
             // 
             // tabIrc
             // 
+            this.tabIrc.Controls.Add(this.btnBack);
+            this.tabIrc.Controls.Add(this.btnAway);
             this.tabIrc.Controls.Add(this.richTextBox1);
             this.tabIrc.Controls.Add(this.btnChangeNick);
             this.tabIrc.Controls.Add(this.txtChangeNick);
@@ -314,7 +318,27 @@
             this.richTextBox2.TabIndex = 0;
             this.richTextBox2.Text = "";
             // 
-            // Form1
+            // btnAway
+            // 
+            this.btnAway.Location = new System.Drawing.Point(586, 55);
+            this.btnAway.Name = "btnAway";
+            this.btnAway.Size = new System.Drawing.Size(75, 23);
+            this.btnAway.TabIndex = 31;
+            this.btnAway.Text = "Away";
+            this.btnAway.UseVisualStyleBackColor = true;
+            this.btnAway.Click += new System.EventHandler(this.BtnAway_Click);
+            // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(668, 55);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 23);
+            this.btnBack.TabIndex = 32;
+            this.btnBack.Text = "Back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
+            // 
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -322,7 +346,7 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.Text = "What a Save!";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
@@ -365,6 +389,8 @@
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnAway;
+        private System.Windows.Forms.Button btnBack;
     }
 }
 

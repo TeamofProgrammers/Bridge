@@ -131,6 +131,19 @@ namespace BridgeMock_May2019
             string mstr = $":{nick} PRIVMSG {channel} :{c1}ACTION {action}{c1}"; 
             write(mstr);
         }
+        public void SetAway(string nick, bool away)
+        {
+            string mstr;
+            if (away)
+            {
+                mstr = $":{nick} AWAY discord user away";
+            }
+            else
+            {
+                mstr = $":{nick} AWAY";
+            }
+            write(mstr);
+        }
         private void write(string line)
         {
             try

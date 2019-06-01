@@ -22,9 +22,16 @@ namespace BridgeMock_May2019
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
+            _client.GuildMemberUpdated += UserUpdatedAsync;
             this.Config = Config;
         }
 
+        private async Task UserUpdatedAsync(SocketGuildUser previous, SocketGuildUser current)
+        {
+            UserStatus previousStat = previous.Status;
+            UserStatus currentStat = current.Status;
+            _EventLog("User Updated");
+        }
         private async Task GuildAvailableAsync(SocketGuild guild)
         {
             _EventLog("Guild has become available");
@@ -50,7 +57,7 @@ namespace BridgeMock_May2019
         {
             var guild = _client.GetGuild(GuildId);
             var channel = guild.GetTextChannel(DiscordChannelId);
-            channel.SendMessageAsync(Message);
+            _ = channel.SendMessageAsync(Message);
         }
 
         public async Task MainAsync()

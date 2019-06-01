@@ -159,5 +159,14 @@ namespace BridgeMock_May2019
             IrcLink.ChangeNick(txtUserName.Text, txtChangeNick.Text);
         }
 
+        private void BtnAway_Click(object sender, EventArgs e)
+        {
+            IrcLink.SetAway(txtUserName.Text, true);
+        }
+
+        private void BtnBack_Click(object sender, EventArgs e)
+        {
+            IrcLink.SetAway(txtUserName.Text, false);
+        }
     }
 }
