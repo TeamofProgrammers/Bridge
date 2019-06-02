@@ -1,10 +1,30 @@
 ﻿using System.Linq;
 using Discord;
+using System.Collections.Generic;
 
 namespace BridgeMock_May2019
 {
+    class UserLink
+    {
+        public string BaseUserName { get; set; }
+        public ulong DiscordUserId { get; set; }
+        public string DiscordUserName { get; set; }
+        public string IrcUid { get; set; }
+        public string IrcUserName
+        {
+            get
+            {
+                return GetIrcUserName(BaseUserName);
+            }
+        }
+        public string GetIrcUserName(string userName)
+        {
+            return $"{userName}/discord".Replace(' ', '_');
+        }
+    }
     class Glue
     {
+        private Dictionary<string, UserLink> UserLinks;
         private BridgeService IrcLink;
         private DiscordService DiscordLink;
         private BridgeConfig Config;
@@ -13,6 +33,7 @@ namespace BridgeMock_May2019
             this.Config = Config;
             this.IrcLink = IrcLink;
             this.DiscordLink = DiscordLink;
+            this.UserLinks = new Dictionary<string, UserLink>();
         }
         public void IrcChannelMessage(object s, IrcMessageEventArgs e)
         {
@@ -38,8 +59,7 @@ namespace BridgeMock_May2019
         public void DiscordGuildConnected(object s, DiscordGuildConnectedEventArgs e)
         {
             if (e.Guild.Id == Config.Discord.GuildId)
-            {
-                //var mchannel = guild.Channels.Where(x => x.Id == _Channel).First();
+            { 
                 foreach (var channel in e.Guild.Channels)
                 {
                     var link = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == channel.Id).FirstOrDefault();
@@ -48,8 +68,26 @@ namespace BridgeMock_May2019
                         var users = channel.Users;
                         foreach (var user in users)
                         {
-                            IrcLink.RegisterNick(user.Username);
-                            IrcLink.JoinChannel(user.Username, link.IrcChannelName);
+                            UserLink thisLink;
+                            if (UserLinks.ContainsKey(user.Username))
+                            {
+                                thisLink = UserLinks[user.Username];
+                            }
+                            else
+                            {
+                                thisLink = new UserLink();
+                                thisLink.BaseUserName = user.Username;
+                                thisLink.DiscordUserName = user.Username;
+                                thisLink.DiscordUserId = user.Id;
+                                thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
+                                UserLinks.Add(user.Username, thisLink);
+                            }
+                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IrcChannelName);
+                            if (!DiscordUserConsideredOnline(user.Status))
+                            {
+                                IrcLink.SetAway(thisLink.IrcUid, true);
+                            }
+                            
                         }
                     }
                 }
@@ -67,11 +105,11 @@ namespace BridgeMock_May2019
         {
             if(!DiscordUserConsideredOnline(e.Previous.Status) && DiscordUserConsideredOnline(e.Current.Status))
             {
-                IrcLink.SetAway(e.Current.Username, false);
+                IrcLink.SetAway(UserLinks[e.Current.Username].IrcUid, false);
             }
             else if(DiscordUserConsideredOnline(e.Previous.Status) && !DiscordUserConsideredOnline(e.Current.Status))
             {
-                IrcLink.SetAway(e.Current.Username, true);
+                IrcLink.SetAway(UserLinks[e.Current.Username].IrcUid, true);
             }
         }
     }

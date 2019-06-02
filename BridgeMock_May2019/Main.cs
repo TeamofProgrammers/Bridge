@@ -97,7 +97,6 @@ namespace BridgeMock_May2019
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
             DiscordLink.OnUserUpdated += glue.DiscordUserUpdated;
             IrcLink.OnChannelMessage += glue.IrcChannelMessage;
-            
 
             // Start the Async Processing
             DiscordLink.MainAsync().GetAwaiter();

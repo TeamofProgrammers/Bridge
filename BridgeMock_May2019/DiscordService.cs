@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -34,7 +33,7 @@ namespace BridgeMock_May2019
             {
                 handler(this, new DiscordUserUpdatedEventArgs(previous, current));
             }
-            _EventLog("User Updated");
+            _EventLog($"{current.Username} Status Updated");
         }
 
         private async Task GuildAvailableAsync(SocketGuild guild)

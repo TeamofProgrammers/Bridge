@@ -41,7 +41,7 @@ namespace BridgeMock_May2019
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[r.Next(s.Length)]).ToArray());
         }
-        public void RegisterNick(string nick)
+        public string RegisterNick(string nick)
         {
             // example
             // :00B UID darkscrypt_0 0 0 darkscrypt_3583 discord 00B780369 0 +iw-x * BRIDGE * :darkscrypt
@@ -84,10 +84,12 @@ namespace BridgeMock_May2019
                 bridgeUser.UserName = username;
                 bridgeUser.Nick = nick;
                 IrcUsers.Add(bridgeUser);
+                return uid;
             }
             else
             {
-               EventLog($"Error: {nick} is already registered ");
+                EventLog($"Error: {nick} is already registered ");
+                return null;
             }
 
         }
