@@ -75,7 +75,7 @@ ulines {
   * Discord is the channel UID on the Discord server.
     * To get the ID from discord, you can right click the channel and click Copy ID. 
 * To get the Guild Id, you can right click your server icon in discord, and click Copy ID.
-** Config.Xml **
+**Config.Xml**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <BridgeConfig>
