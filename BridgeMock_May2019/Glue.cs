@@ -47,6 +47,21 @@ namespace BridgeMock_May2019
                 _ = DiscordLink.SendMessage(Config.Discord.GuildId, link.DiscordChannelId, message);
             }
         }
+        /// <summary>
+        /// Data Sanitization and String Parser
+        /// Cleans up a discord message prior to being sent over the IRC link. 
+        /// This can prevent an IRC injection attack... (Is that even a thing??)
+        /// </summary>
+        public string ParseDiscordMessage(string message)
+        {
+            var parsed = message.Replace("\r\n","");
+            parsed = parsed.Replace("\n", " ");
+
+            if (Config.Irc.SqueezeWhiteSpace)
+                parsed = System.Text.RegularExpressions.Regex.Replace(parsed, @"\s+", " ");
+
+            return parsed;
+        }
         public void DiscordChannelMessage(object s, DiscordMessageEventArgs e)
         {
             var query = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == e.Message.Channel.Id).FirstOrDefault();
@@ -58,7 +73,22 @@ namespace BridgeMock_May2019
                     throw new System.InvalidOperationException("Discord<->Irc UserLink not established for message sender.");
                 }
                 var thisLink = UserLinks[e.Message.Author.Username];
-                IrcLink.SendMessage(thisLink.IrcUid, e.Message.Content, query.IrcChannelName);
+                string parsedMessage = ParseDiscordMessage(e.Message.Content);
+
+                int chunkSize = Config.Irc.MaxMessageSize;
+                if (parsedMessage.Length <= chunkSize)
+                {
+                    IrcLink.SendMessage(thisLink.IrcUid, parsedMessage, query.IrcChannelName);
+                }
+                else
+                {
+                    for(int i = 0; i < parsedMessage.Length; i += Config.Irc.MaxMessageSize)
+                    {
+
+                        if (i + Config.Irc.MaxMessageSize > parsedMessage.Length) chunkSize = parsedMessage.Length - i;
+                        IrcLink.SendMessage(thisLink.IrcUid, parsedMessage.Substring(i, chunkSize), query.IrcChannelName);
+                    }
+                }
             }
         }
 

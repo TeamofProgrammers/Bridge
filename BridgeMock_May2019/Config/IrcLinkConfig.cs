@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -17,7 +13,14 @@ namespace BridgeMock_May2019
         public string ServerIdentifier { get; set; }
         public string ServerName { get; set; }
         public string ServerDescription { get; set; }
-
+        /// <summary>
+        /// Largest message length supported by Irc Server.
+        /// </summary>
+        public int MaxMessageSize { get; set; } // ToDo: Add to config.xml
+        /// <summary>
+        /// Do we squeeze whitespace down prior to sending? (Condense multiple spaces to single space)
+        /// </summary>
+        public bool SqueezeWhiteSpace { get; set; } // ToDo: Add to config.xml
         public bool ReadConfig()
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
@@ -34,6 +37,8 @@ namespace BridgeMock_May2019
                 ServerIdentifier = irc["ServerIdentifier"].InnerText;
                 ServerName = irc["ServerName"].InnerText;
                 ServerDescription = irc["ServerDescription"].InnerText;
+                MaxMessageSize = 350; 
+                SqueezeWhiteSpace = true; 
                 return true;
             }
             return false;
