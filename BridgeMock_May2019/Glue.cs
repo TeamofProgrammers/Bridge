@@ -52,7 +52,13 @@ namespace BridgeMock_May2019
             var query = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == e.Message.Channel.Id).FirstOrDefault();
             if (query != null)
             {
-                IrcLink.SendMessage(e.Message.Author.Username, e.Message.Content, query.IrcChannelName);
+                if (!UserLinks.ContainsKey(e.Message.Author.Username))
+                {
+                    // I don't know if this will ever happen, but I would like to investigate what to do here if it ever does.
+                    throw new System.InvalidOperationException("Discord<->Irc UserLink not established for message sender.");
+                }
+                var thisLink = UserLinks[e.Message.Author.Username];
+                IrcLink.SendMessage(thisLink.IrcUid, e.Message.Content, query.IrcChannelName);
             }
         }
 
@@ -82,13 +88,16 @@ namespace BridgeMock_May2019
                                 thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
                                 UserLinks.Add(user.Username, thisLink);
                             }
-                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IrcChannelName);
-                            if (!DiscordUserConsideredOnline(user.Status))
-                            {
-                                IrcLink.SetAway(thisLink.IrcUid, true);
-                            }
-                            
+                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IrcChannelName);                            
                         }
+                    }
+                }
+                foreach(var user in e.Guild.Users)
+                {
+                    if (!DiscordUserConsideredOnline(user.Status) && UserLinks.ContainsKey(user.Username))
+                    {
+                        UserLink thisLink = UserLinks[user.Username];
+                        IrcLink.SetAway(thisLink.IrcUid, true);
                     }
                 }
             }
