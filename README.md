@@ -1,6 +1,6 @@
 # Bridge
 ## ToDo:
-- [ ] Handle Usernames With Spaces
+- [X] Handle Usernames With Spaces
 - [ ] General Input / Output validation. 
   - [ ] Discord can send a new line with alt+enter. How does irc handle this? 
 - [ ] What happens when User gets kicked from IRC, but still are in discord?
@@ -9,7 +9,8 @@
 - [ ] What happens when a user is @ referenced in discord? Do we translate that on irc?
 - [ ] What happens when a user is highlighted in irc? do we highlight them in discord?
 - [ ] What happens with nickname collisions?
-  - [ ] Implement a prefix / suffix for nick names. 
+  - [X] Implement a prefix / suffix for nick names.
+  - [ ] Implement IRC server level check prior to registration of user. Verify that we aren't going to /kill somebody. 
 - [ ] Add option to ignore discord bots.
 - [ ] What happens when a discord user receives a private message on irc?
   - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
