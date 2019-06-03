@@ -19,7 +19,7 @@ namespace BridgeMock_May2019
         }
         public string GetIrcUserName(string userName)
         {
-            return $"{userName}/discord".Replace(' ', '_');
+            return $"{userName}/d".Replace(' ', '_');
         }
     }
     class Glue
@@ -56,7 +56,9 @@ namespace BridgeMock_May2019
         {
             var parsed = message.Replace("\r\n","");
             parsed = parsed.Replace("\n", " ");
-
+            char bold = (char)2;
+           
+            // :shiftybit PRIVMSG #top :asdf test  normal text
             if (Config.Irc.SqueezeWhiteSpace)
                 parsed = System.Text.RegularExpressions.Regex.Replace(parsed, @"\s+", " ");
 
@@ -134,7 +136,7 @@ namespace BridgeMock_May2019
         }
         private bool DiscordUserConsideredOnline(UserStatus status)
         {
-            if(status == UserStatus.AFK || status == UserStatus.Idle || status == UserStatus.Online)
+            if(status == UserStatus.AFK || status == UserStatus.Idle || status == UserStatus.Online) // TODO: XML Config
             {
                 return true;
             }

@@ -16,11 +16,11 @@ namespace BridgeMock_May2019
         /// <summary>
         /// Largest message length supported by Irc Server.
         /// </summary>
-        public int MaxMessageSize { get; set; } // ToDo: Add to config.xml
+        public int MaxMessageSize { get; set; } // TODO: Add to config.xml
         /// <summary>
         /// Do we squeeze whitespace down prior to sending? (Condense multiple spaces to single space)
         /// </summary>
-        public bool SqueezeWhiteSpace { get; set; } // ToDo: Add to config.xml
+        public bool SqueezeWhiteSpace { get; set; } // TODO: Add to config.xml
         public bool ReadConfig()
         {
             var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
@@ -37,8 +37,8 @@ namespace BridgeMock_May2019
                 ServerIdentifier = irc["ServerIdentifier"].InnerText;
                 ServerName = irc["ServerName"].InnerText;
                 ServerDescription = irc["ServerDescription"].InnerText;
-                MaxMessageSize = 350; 
-                SqueezeWhiteSpace = true; 
+                MaxMessageSize = 350; //TODO: Config.Xml
+                SqueezeWhiteSpace = true;  //TODO: Config.xml
                 return true;
             }
             return false;
