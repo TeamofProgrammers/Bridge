@@ -48,15 +48,28 @@ namespace BridgeMock_May2019
             var thisLink = UserLinks[username];
             return thisLink;
         }
+        public ChannelLink FindIrcChannelLink(string IrcChannel)
+        {
+            var link = Config.Discord.ChannelLinks.Where(x => x.IrcChannelName.ToUpper() == IrcChannel.ToUpper()).FirstOrDefault();
+            return link;
+        }
+        public string ParseIrcMessageForUsers(string message)
+        {
+            foreach (KeyValuePair<string, UserLink> user in this.UserLinks.ToList())
+            {
+                string highlightToken = $"<@{user.Value.DiscordUserId}>";
+                message = message.Replace(user.Value.IrcUserName, highlightToken);
+            }
+            return message;
+        }
         public void IrcChannelMessage(object s, IrcMessageEventArgs e)
         {
             //_EventLog("Channel Message Received");
             //_EventLog($"{e.ChannelMessage.User} {e.ChannelMessage.Channel} {e.ChannelMessage.Message}");
-            var link = Config.Discord.ChannelLinks
-                .Where(x => x.IrcChannelName.ToUpper() == e.ChannelMessage.Channel.ToUpper())
-                .FirstOrDefault();
-            if (null != link) { 
-                string message = $"<{e.ChannelMessage.User}> {e.ChannelMessage.Message}";
+            var link = FindIrcChannelLink(e.ChannelMessage.Channel);
+            if (null != link) {
+                string parsedMessage = ParseIrcMessageForUsers(e.ChannelMessage.Message);
+                string message = $"<{e.ChannelMessage.User}> {parsedMessage}";
                 _ = DiscordLink.SendMessage(Config.Discord.GuildId, link.DiscordChannelId, message);
             }
         }
@@ -102,7 +115,6 @@ namespace BridgeMock_May2019
                 {
                     for(int i = 0; i < parsedMessage.Length; i += Config.Irc.MaxMessageSize)
                     {
-
                         if (i + Config.Irc.MaxMessageSize > parsedMessage.Length) chunkSize = parsedMessage.Length - i;
                         IrcLink.SendMessage(thisLink.IrcUid, parsedMessage.Substring(i, chunkSize), query.IrcChannelName);
                     }
