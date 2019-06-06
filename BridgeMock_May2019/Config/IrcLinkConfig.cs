@@ -13,6 +13,7 @@ namespace BridgeMock_May2019
         public string ServerIdentifier { get; set; }
         public string ServerName { get; set; }
         public string ServerDescription { get; set; }
+        public string NicknameSuffix { get; set; }
         /// <summary>
         /// Largest message length supported by Irc Server.
         /// </summary>
@@ -20,29 +21,7 @@ namespace BridgeMock_May2019
         /// <summary>
         /// Do we squeeze whitespace down prior to sending? (Condense multiple spaces to single space)
         /// </summary>
-        public bool SqueezeWhiteSpace { get; set; } // TODO: Add to config.xml
-        public bool ReadConfig()
-        {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            DirectoryInfo path = new FileInfo(location.AbsolutePath).Directory;
-            FileInfo[] config = path.GetFiles("config.xml");
-            if (config.Length != 0)
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(config[0].FullName);
-                XmlNode irc = doc.DocumentElement.SelectSingleNode("IRCServer");
-                UplinkHost = irc["UplinkHost"].InnerText;
-                UplinkPort = int.Parse(irc["UplinkPort"].InnerText);
-                UplinkPassword = irc["UplinkPassword"].InnerText;
-                ServerIdentifier = irc["ServerIdentifier"].InnerText;
-                ServerName = irc["ServerName"].InnerText;
-                ServerDescription = irc["ServerDescription"].InnerText;
-                MaxMessageSize = 350; //TODO: Config.Xml
-                SqueezeWhiteSpace = true;  //TODO: Config.xml
-                return true;
-            }
-            return false;
-        }
+        public bool SqueezeWhiteSpace { get; set; } // TODO: Add to config.xml        
     }
 
 }

@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace BridgeMock_May2019
 {
-    public class ChannelLink
+    public class ChannelMapping : List<Channel> { }
+    public class Channel
     {
-        public ulong DiscordChannelId { get; set; }
-        public string IrcChannelName { get; set; }
+        /// <summary>
+        /// DiscordChannelId
+        /// </summary>
+        public ulong Discord { get; set; }
+        /// <summary>
+        /// IrcChannelName
+        /// </summary>
+        public string IRC { get; set; }
     }
 }
