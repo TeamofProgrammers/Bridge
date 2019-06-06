@@ -1,8 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
-
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace BridgeMock_May2019
 {
@@ -88,9 +91,9 @@ namespace BridgeMock_May2019
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            BridgeConfig config = new BridgeConfig();
-            IrcLink = new BridgeService(InputLog, OutputLog, EventLog, config.Irc);
-            DiscordLink = new DiscordService(DiscordLog, config.Discord);
+            BridgeConfig config = LoadConfig();
+            IrcLink = new BridgeService(InputLog, OutputLog, EventLog, config.IRCServer);
+            DiscordLink = new DiscordService(DiscordLog, config.DiscordServer);
             glue = new Glue(IrcLink, DiscordLink, config);
 
             DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
@@ -101,6 +104,17 @@ namespace BridgeMock_May2019
             // Start the Async Processing
             DiscordLink.MainAsync().GetAwaiter();
             IrcLink.StartBridge(); // Sort of Async.. Fix this later
+        }
+        private BridgeConfig LoadConfig()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(BridgeConfig));            
+            object obj = null;
+
+            using (TextReader reader = new StringReader(File.ReadAllText("config.xml")))
+            {
+                obj = serializer.Deserialize(reader);
+            }
+            return (BridgeConfig)obj;
         }
 
         private void BtnSend_Click(object sender, EventArgs e)

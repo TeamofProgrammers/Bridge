@@ -9,7 +9,7 @@ namespace BridgeMock_May2019
     class DiscordService
     {
         private readonly DiscordSocketClient _client;
-        private List<ChannelLink> _ChannelLinks;
+        private List<Channel> _ChannelLinks;
         static Action<string> _EventLog;
         public event EventHandler<DiscordMessageEventArgs> OnChannelMessage;
         public event EventHandler<DiscordGuildConnectedEventArgs> OnGuildConnected;
@@ -18,7 +18,7 @@ namespace BridgeMock_May2019
         public DiscordService(Action<string> EventLog, DiscordLinkConfig Config)
         {
             _EventLog = EventLog;
-            _ChannelLinks = new List<ChannelLink>();
+            _ChannelLinks = new List<Channel>();
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
@@ -30,7 +30,7 @@ namespace BridgeMock_May2019
         {
             EventHandler<DiscordUserUpdatedEventArgs> handler = OnUserUpdated;
             if(null != handler)
-            {
+            {                
                 handler(this, new DiscordUserUpdatedEventArgs(previous, current));
             }
             _EventLog($"{current.Username} Status Updated");

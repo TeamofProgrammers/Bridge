@@ -12,6 +12,7 @@ namespace BridgeMock_May2019
         public ulong DiscordUserId { get; set; }
         public string DiscordUserName { get; set; }
         public string IrcUid { get; set; }
+        public string Suffix { get; private set; }
         public string IrcUserName
         {
             get
@@ -21,7 +22,12 @@ namespace BridgeMock_May2019
         }
         private string GetIrcUserName(string userName)
         {
-            return $"{userName}/d".Replace(' ', '_');
+            return $"{userName}{Suffix}".Replace(' ', '_');
+        }
+
+        public UserLink(string suffix)
+        {
+            Suffix = suffix;
         }
     }
     class Glue
@@ -30,6 +36,7 @@ namespace BridgeMock_May2019
         private BridgeService IrcLink;
         private DiscordService DiscordLink;
         private BridgeConfig Config;
+
         public Glue(BridgeService IrcLink, DiscordService DiscordLink, BridgeConfig Config)
         {
             this.Config = Config;
@@ -48,9 +55,9 @@ namespace BridgeMock_May2019
             var thisLink = UserLinks[username];
             return thisLink;
         }
-        public ChannelLink FindIrcChannelLink(string IrcChannel)
+        public Channel FindIrcChannelLink(string IrcChannel)
         {
-            var link = Config.Discord.ChannelLinks.Where(x => x.IrcChannelName.ToUpper() == IrcChannel.ToUpper()).FirstOrDefault();
+            var link = Config.DiscordServer.ChannelMapping.Where(x => x.IRC.ToUpper() == IrcChannel.ToUpper()).FirstOrDefault();
             return link;
         }
         public string ParseIrcMessageForUsers(string message)
@@ -70,7 +77,7 @@ namespace BridgeMock_May2019
             if (null != link) {
                 string parsedMessage = ParseIrcMessageForUsers(e.ChannelMessage.Message);
                 string message = $"<{e.ChannelMessage.User}> {parsedMessage}";
-                _ = DiscordLink.SendMessage(Config.Discord.GuildId, link.DiscordChannelId, message);
+                _ = DiscordLink.SendMessage(Config.DiscordServer.GuildId, link.Discord, message);
             }
         }
         /// <summary>
@@ -93,30 +100,30 @@ namespace BridgeMock_May2019
                 }
             }
             // :shiftybit PRIVMSG #top :asdf test  normal text
-            if (Config.Irc.SqueezeWhiteSpace)
+            if (Config.IRCServer.SqueezeWhiteSpace)
                 parsed = System.Text.RegularExpressions.Regex.Replace(parsed, @"\s+", " ");
 
             return parsed;
         }
         public void DiscordChannelMessage(object s, DiscordMessageEventArgs e)
         {
-            var query = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == e.Message.Channel.Id).FirstOrDefault();
+            var query = Config.DiscordServer.ChannelMapping.Where(x => x.Discord == e.Message.Channel.Id).FirstOrDefault();
             if (query != null)
             {
                 var thisLink = FindUserLink(e.Message.Author.Username);
                 string parsedMessage = ParseDiscordMessage(e.Message.Content, e.Message.MentionedUsers);
 
-                int chunkSize = Config.Irc.MaxMessageSize;
+                int chunkSize = Config.IRCServer.MaxMessageSize;
                 if (parsedMessage.Length <= chunkSize)
                 {
-                    IrcLink.SendMessage(thisLink.IrcUid, parsedMessage, query.IrcChannelName);
+                    IrcLink.SendMessage(thisLink.IrcUid, parsedMessage, query.IRC);
                 }
                 else
                 {
-                    for(int i = 0; i < parsedMessage.Length; i += Config.Irc.MaxMessageSize)
+                    for(int i = 0; i < parsedMessage.Length; i += Config.IRCServer.MaxMessageSize)
                     {
-                        if (i + Config.Irc.MaxMessageSize > parsedMessage.Length) chunkSize = parsedMessage.Length - i;
-                        IrcLink.SendMessage(thisLink.IrcUid, parsedMessage.Substring(i, chunkSize), query.IrcChannelName);
+                        if (i + Config.IRCServer.MaxMessageSize > parsedMessage.Length) chunkSize = parsedMessage.Length - i;
+                        IrcLink.SendMessage(thisLink.IrcUid, parsedMessage.Substring(i, chunkSize), query.IRC);
                     }
                 }
             }
@@ -124,11 +131,11 @@ namespace BridgeMock_May2019
 
         public void DiscordGuildConnected(object s, DiscordGuildConnectedEventArgs e)
         {
-            if (e.Guild.Id == Config.Discord.GuildId)
+            if (e.Guild.Id == Config.DiscordServer.GuildId)
             { 
                 foreach (var channel in e.Guild.Channels)
                 {
-                    var link = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == channel.Id).FirstOrDefault();
+                    var link = Config.DiscordServer.ChannelMapping.Where(x => x.Discord == channel.Id).FirstOrDefault();
                     if (link != null)
                     {
                         var users = channel.Users;
@@ -141,14 +148,14 @@ namespace BridgeMock_May2019
                             }
                             else
                             {
-                                thisLink = new UserLink();
+                                thisLink = new UserLink(Config.IRCServer.NicknameSuffix);
                                 thisLink.BaseUserName = user.Username;
                                 thisLink.DiscordUserName = user.Username;
                                 thisLink.DiscordUserId = user.Id;
                                 thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
                                 UserLinks.Add(user.Username, thisLink);
                             }
-                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IrcChannelName);                            
+                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IRC);                            
                         }
                     }
                 }
