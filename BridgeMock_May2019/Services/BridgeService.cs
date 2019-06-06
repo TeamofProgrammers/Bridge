@@ -1,47 +1,28 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.WebSocket;
-using System.Collections.Generic;
-using System.Diagnostics;
+using ToP.Bridge.Model.Classes;
+using ToP.Bridge.Model.Config;
+using ToP.Bridge.Model.Events;
+using ToP.Bridge.Model.Events.Discord;
+using ToP.Bridge.Model.Events.Irc;
 
-namespace BridgeMock_May2019
+namespace ToP.Bridge.Services
 {
-    class UserLink
+    public class BridgeService
     {
-        public string BaseUserName { get; set; }
-        public ulong DiscordUserId { get; set; }
-        public string DiscordUserName { get; set; }
-        public string IrcUid { get; set; }
-        public string Suffix { get; private set; }
-        public string IrcUserName
-        {
-            get
-            {
-                return GetIrcUserName(BaseUserName);
-            }
-        }
-        private string GetIrcUserName(string userName)
-        {
-            return $"{userName}{Suffix}".Replace(' ', '_');
-        }
+        private Dictionary<string, UserLink> UserLinks { get; set; }
+        private IrcService IrcLink { get; set; }
+        private DiscordService DiscordLink { get; set; }
+        private BridgeConfig Config { get; set; }
 
-        public UserLink(string suffix)
+        public BridgeService(IrcService ircLink, DiscordService discordLink, BridgeConfig config)
         {
-            Suffix = suffix;
-        }
-    }
-    class Glue
-    {
-        private Dictionary<string, UserLink> UserLinks;
-        private BridgeService IrcLink;
-        private DiscordService DiscordLink;
-        private BridgeConfig Config;
-
-        public Glue(BridgeService IrcLink, DiscordService DiscordLink, BridgeConfig Config)
-        {
-            this.Config = Config;
-            this.IrcLink = IrcLink;
-            this.DiscordLink = DiscordLink;
+            this.Config = config;
+            this.IrcLink = ircLink;
+            this.DiscordLink = discordLink;
             this.UserLinks = new Dictionary<string, UserLink>();
         }
 
@@ -57,7 +38,7 @@ namespace BridgeMock_May2019
         }
         public Channel FindIrcChannelLink(string IrcChannel)
         {
-            var link = Config.DiscordServer.ChannelMapping.Where(x => x.IRC.ToUpper() == IrcChannel.ToUpper()).FirstOrDefault();
+            var link = Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.IRC.ToUpper() == IrcChannel.ToUpper());
             return link;
         }
         public string ParseIrcMessageForUsers(string message)
@@ -101,13 +82,13 @@ namespace BridgeMock_May2019
             }
             // :shiftybit PRIVMSG #top :asdf test  normal text
             if (Config.IRCServer.SqueezeWhiteSpace)
-                parsed = System.Text.RegularExpressions.Regex.Replace(parsed, @"\s+", " ");
+                parsed = Regex.Replace(parsed, @"\s+", " ");
 
             return parsed;
         }
         public void DiscordChannelMessage(object s, DiscordMessageEventArgs e)
         {
-            var query = Config.DiscordServer.ChannelMapping.Where(x => x.Discord == e.Message.Channel.Id).FirstOrDefault();
+            var query = Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == e.Message.Channel.Id);
             if (query != null)
             {
                 var thisLink = FindUserLink(e.Message.Author.Username);
@@ -135,11 +116,11 @@ namespace BridgeMock_May2019
             { 
                 foreach (var channel in e.Guild.Channels)
                 {
-                    var link = Config.DiscordServer.ChannelMapping.Where(x => x.Discord == channel.Id).FirstOrDefault();
+                    var link = Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == channel.Id);
                     if (link != null)
                     {
                         var users = channel.Users;
-                        foreach (var user in users)
+                        foreach (var user in users.Where(x=> !x.Roles.Select(y=> y.Name).Intersect(Config.DiscordServer.IgnoredUserRoles).Any()))
                         {
                             UserLink thisLink;
                             if (UserLinks.ContainsKey(user.Username))
@@ -148,10 +129,12 @@ namespace BridgeMock_May2019
                             }
                             else
                             {
-                                thisLink = new UserLink(Config.IRCServer.NicknameSuffix);
-                                thisLink.BaseUserName = user.Username;
-                                thisLink.DiscordUserName = user.Username;
-                                thisLink.DiscordUserId = user.Id;
+                                thisLink = new UserLink(Config.IRCServer.NicknameSuffix)
+                                {
+                                    BaseUserName = user.Username,
+                                    DiscordUserName = user.Username,
+                                    DiscordUserId = user.Id
+                                };
                                 thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
                                 UserLinks.Add(user.Username, thisLink);
                             }
@@ -171,11 +154,7 @@ namespace BridgeMock_May2019
         }
         private bool DiscordUserConsideredOnline(UserStatus status)
         {
-            if(status == UserStatus.AFK || status == UserStatus.Idle || status == UserStatus.Online) // TODO: XML Config
-            {
-                return true;
-            }
-            return false;
+            return Config.DiscordServer.OnlineUserStatuses.Contains(status);
         }
         public void DiscordUserUpdated(object s, DiscordUserUpdatedEventArgs e)
         {

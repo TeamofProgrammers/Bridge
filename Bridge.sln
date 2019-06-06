@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BridgeMock_May2019", "BridgeMock_May2019\BridgeMock_May2019.csproj", "{FA431C11-BF78-46ED-BF22-58F1CBE82886}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge", "BridgeMock_May2019\Bridge.csproj", "{FA431C11-BF78-46ED-BF22-58F1CBE82886}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

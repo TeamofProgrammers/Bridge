@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
+using ToP.Bridge.Model.Classes;
+using ToP.Bridge.Model.Config;
+using ToP.Bridge.Model.Events;
+using ToP.Bridge.Model.Events.Irc;
 
-
-namespace BridgeMock_May2019
+namespace ToP.Bridge.Services
 {
-    class IrcUser
-    {
-        public string UID { get; set; }
-        public string Nick { get; set; }
-        public string UserName { get; set; }
-    }
-    class BridgeService
+    public class IrcService
     {
         private TcpClient tcpClient;
         private NetworkStream ns;
@@ -26,7 +23,7 @@ namespace BridgeMock_May2019
         private IrcLinkConfig Config;
         public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
         private static Random r = new Random();
-        public BridgeService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
+        public IrcService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
         {
             InputLog = inputLog;
             OutputLog = outputLog;
@@ -121,8 +118,8 @@ namespace BridgeMock_May2019
             //:00257TR0R NICK bitshift 1559074834
             //:00257TR0R NICK shiftybit 1559074836
 
-            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower()));
-            if(query.ToList().Count == 0)
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower())).ToList();
+            if(query.Count == 0)
             {
                 EventLog($"Error: {oldNick} is not a valid user");
                 return;
