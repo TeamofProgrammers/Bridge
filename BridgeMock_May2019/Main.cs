@@ -182,5 +182,10 @@ namespace BridgeMock_May2019
         {
             IrcLink.SetAway(txtUserName.Text, false);
         }
+
+        private void BtnDisconnect_Click(object sender, EventArgs e)
+        {
+            IrcLink.DisconnectUser(txtUserName.Text);
+        }
     }
 }

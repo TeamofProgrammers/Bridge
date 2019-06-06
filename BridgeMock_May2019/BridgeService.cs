@@ -70,7 +70,7 @@ namespace BridgeMock_May2019
                 int timestamp = 0;
                 string username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
                 string hostname = "discordBot";
-                string uid = RandomString(9); // *MAJOR HACK* Need to track this
+                string uid = RandomString(9);
                 int serviceStamp = 0;
                 string userMode = "+iwx";
                 string vhost = "*";
@@ -93,6 +93,28 @@ namespace BridgeMock_May2019
             }
 
         }
+        public IrcUser GetIrcUser(string nick)
+        {
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
+            if (query.ToList().Count != 0)
+            {
+                return query.FirstOrDefault();
+            }
+            return null;
+        }
+        public void DisconnectUser(string nick)
+        {
+            // Example
+            //:002G7Y912 QUIT :Quit: Leaving
+            IrcUser user = GetIrcUser(nick);
+            if(null != user)
+            {
+                string mstr = $":{user.UID} QUIT :Quit: Discord User Left";
+                write(mstr);
+                IrcUsers.Remove(user);
+            }
+
+        }
         public void ChangeNick(string oldNick, string nick)
         {
             // Example
@@ -105,7 +127,7 @@ namespace BridgeMock_May2019
                 EventLog($"Error: {oldNick} is not a valid user");
                 return;
             }
-            IrcUser user = query.First();
+            IrcUser user = query.FirstOrDefault();
             string mstr = $":{user.UID} NICK {nick} 0";
             write(mstr);
             user.Nick = nick;

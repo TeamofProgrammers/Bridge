@@ -14,6 +14,8 @@ namespace BridgeMock_May2019
         public event EventHandler<DiscordMessageEventArgs> OnChannelMessage;
         public event EventHandler<DiscordGuildConnectedEventArgs> OnGuildConnected;
         public event EventHandler<DiscordUserUpdatedEventArgs> OnUserUpdated;
+        public event EventHandler<DiscordUserJoinLeaveEventArgs> OnUserLeave;
+        public event EventHandler<DiscordUserJoinLeaveEventArgs> OnUserJoin;
         private DiscordLinkConfig Config;
         public DiscordService(Action<string> EventLog, DiscordLinkConfig Config)
         {
@@ -23,9 +25,28 @@ namespace BridgeMock_May2019
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
             _client.GuildMemberUpdated += UserUpdatedAsync;
+            _client.UserLeft += UserLeftGuild;
+            _client.UserJoined += UserJoinedGuild;
             this.Config = Config;
         }
-
+        private async Task UserJoinedGuild(SocketGuildUser user)
+        {
+            EventHandler<DiscordUserJoinLeaveEventArgs> handler = OnUserJoin;
+            if (null != handler)
+            {
+                handler(this, new DiscordUserJoinLeaveEventArgs(user));
+            }
+            _EventLog($"{user.Username} has joined the guild");
+        }
+        private async Task UserLeftGuild(SocketGuildUser user)
+        {
+            EventHandler<DiscordUserJoinLeaveEventArgs> handler = OnUserLeave;
+            if(null != handler)
+            {
+                handler(this, new DiscordUserJoinLeaveEventArgs(user));
+            }
+            _EventLog($"{user.Username} has left guild");
+        }
         private async Task UserUpdatedAsync(SocketGuildUser previous, SocketGuildUser current)
         {
             EventHandler<DiscordUserUpdatedEventArgs> handler = OnUserUpdated;

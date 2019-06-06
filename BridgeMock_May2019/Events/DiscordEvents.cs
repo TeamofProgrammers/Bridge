@@ -37,4 +37,15 @@ namespace BridgeMock_May2019
         public SocketGuildUser Previous {  get { return previous; } }
         public SocketGuildUser Current {  get { return current; } }
     }
+    public class DiscordUserJoinLeaveEventArgs : EventArgs
+    {
+        private readonly SocketGuildUser user;
+
+        public DiscordUserJoinLeaveEventArgs(SocketGuildUser user)
+        {
+            this.user = user;
+        }
+        public SocketGuildUser User{ get { return user; } }
+
+    }
 }

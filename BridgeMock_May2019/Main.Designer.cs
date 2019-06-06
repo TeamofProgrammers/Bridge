@@ -36,6 +36,8 @@
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabIrc = new System.Windows.Forms.TabPage();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.btnAway = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.btnChangeNick = new System.Windows.Forms.Button();
             this.txtChangeNick = new System.Windows.Forms.TextBox();
@@ -55,8 +57,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.btnAway = new System.Windows.Forms.Button();
-            this.btnBack = new System.Windows.Forms.Button();
+            this.btnDisconnect = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabIrc.SuspendLayout();
@@ -73,7 +74,7 @@
             this.logToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(826, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(843, 24);
             this.menuStrip1.TabIndex = 13;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -109,11 +110,12 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(826, 539);
+            this.tabControl1.Size = new System.Drawing.Size(843, 539);
             this.tabControl1.TabIndex = 16;
             // 
             // tabIrc
             // 
+            this.tabIrc.Controls.Add(this.btnDisconnect);
             this.tabIrc.Controls.Add(this.btnBack);
             this.tabIrc.Controls.Add(this.btnAway);
             this.tabIrc.Controls.Add(this.richTextBox1);
@@ -134,10 +136,30 @@
             this.tabIrc.Location = new System.Drawing.Point(4, 22);
             this.tabIrc.Name = "tabIrc";
             this.tabIrc.Padding = new System.Windows.Forms.Padding(3);
-            this.tabIrc.Size = new System.Drawing.Size(818, 513);
+            this.tabIrc.Size = new System.Drawing.Size(835, 513);
             this.tabIrc.TabIndex = 0;
             this.tabIrc.Text = "IRC Controls";
             this.tabIrc.UseVisualStyleBackColor = true;
+            // 
+            // btnBack
+            // 
+            this.btnBack.Location = new System.Drawing.Point(668, 55);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 23);
+            this.btnBack.TabIndex = 32;
+            this.btnBack.Text = "Back";
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
+            // 
+            // btnAway
+            // 
+            this.btnAway.Location = new System.Drawing.Point(586, 55);
+            this.btnAway.Name = "btnAway";
+            this.btnAway.Size = new System.Drawing.Size(75, 23);
+            this.btnAway.TabIndex = 31;
+            this.btnAway.Text = "Away";
+            this.btnAway.UseVisualStyleBackColor = true;
+            this.btnAway.Click += new System.EventHandler(this.BtnAway_Click);
             // 
             // richTextBox1
             // 
@@ -146,7 +168,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.Location = new System.Drawing.Point(10, 138);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(802, 358);
+            this.richTextBox1.Size = new System.Drawing.Size(819, 358);
             this.richTextBox1.TabIndex = 30;
             this.richTextBox1.Text = "";
             // 
@@ -318,31 +340,21 @@
             this.richTextBox2.TabIndex = 0;
             this.richTextBox2.Text = "";
             // 
-            // btnAway
+            // btnDisconnect
             // 
-            this.btnAway.Location = new System.Drawing.Point(586, 55);
-            this.btnAway.Name = "btnAway";
-            this.btnAway.Size = new System.Drawing.Size(75, 23);
-            this.btnAway.TabIndex = 31;
-            this.btnAway.Text = "Away";
-            this.btnAway.UseVisualStyleBackColor = true;
-            this.btnAway.Click += new System.EventHandler(this.BtnAway_Click);
-            // 
-            // btnBack
-            // 
-            this.btnBack.Location = new System.Drawing.Point(668, 55);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(75, 23);
-            this.btnBack.TabIndex = 32;
-            this.btnBack.Text = "Back";
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
+            this.btnDisconnect.Location = new System.Drawing.Point(748, 55);
+            this.btnDisconnect.Name = "btnDisconnect";
+            this.btnDisconnect.Size = new System.Drawing.Size(75, 23);
+            this.btnDisconnect.TabIndex = 33;
+            this.btnDisconnect.Text = "Disconnect";
+            this.btnDisconnect.UseVisualStyleBackColor = true;
+            this.btnDisconnect.Click += new System.EventHandler(this.BtnDisconnect_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(826, 567);
+            this.ClientSize = new System.Drawing.Size(843, 567);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -391,6 +403,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnAway;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.Button btnDisconnect;
     }
 }
 
