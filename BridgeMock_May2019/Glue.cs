@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using Discord;
+using Discord.WebSocket;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BridgeMock_May2019
 {
@@ -17,7 +19,7 @@ namespace BridgeMock_May2019
                 return GetIrcUserName(BaseUserName);
             }
         }
-        public string GetIrcUserName(string userName)
+        private string GetIrcUserName(string userName)
         {
             return $"{userName}/d".Replace(' ', '_');
         }
@@ -34,6 +36,17 @@ namespace BridgeMock_May2019
             this.IrcLink = IrcLink;
             this.DiscordLink = DiscordLink;
             this.UserLinks = new Dictionary<string, UserLink>();
+        }
+
+        public UserLink FindUserLink(string username)
+        {
+            if (!UserLinks.ContainsKey(username))
+            {
+                // I don't know if this will ever happen, but I would like to investigate what to do here if it ever does.
+                throw new System.InvalidOperationException("Discord<->Irc UserLink not established for message sender");
+            }
+            var thisLink = UserLinks[username];
+            return thisLink;
         }
         public void IrcChannelMessage(object s, IrcMessageEventArgs e)
         {
@@ -52,12 +65,20 @@ namespace BridgeMock_May2019
         /// Cleans up a discord message prior to being sent over the IRC link. 
         /// This can prevent an IRC injection attack... (Is that even a thing??)
         /// </summary>
-        public string ParseDiscordMessage(string message)
+        public string ParseDiscordMessage(string message, IReadOnlyCollection<SocketUser> users = null)
         {
             var parsed = message.Replace("\r\n","");
             parsed = parsed.Replace("\n", " ");
-            char bold = (char)2;
-           
+            char bold = (char)2;  // CloudyOne: Fix me please. You are my only hope. Convert **text** to bold stuff in irc.
+            if(users.Count > 0)
+            {
+                foreach(var user in users)
+                {
+                    string replacement = $"<@{user.Id}>";
+                    var mentionedLink = FindUserLink(user.Username);
+                    parsed = parsed.Replace(replacement, mentionedLink.IrcUserName);
+                }
+            }
             // :shiftybit PRIVMSG #top :asdf test  normal text
             if (Config.Irc.SqueezeWhiteSpace)
                 parsed = System.Text.RegularExpressions.Regex.Replace(parsed, @"\s+", " ");
@@ -69,13 +90,8 @@ namespace BridgeMock_May2019
             var query = Config.Discord.ChannelLinks.Where(x => x.DiscordChannelId == e.Message.Channel.Id).FirstOrDefault();
             if (query != null)
             {
-                if (!UserLinks.ContainsKey(e.Message.Author.Username))
-                {
-                    // I don't know if this will ever happen, but I would like to investigate what to do here if it ever does.
-                    throw new System.InvalidOperationException("Discord<->Irc UserLink not established for message sender.");
-                }
-                var thisLink = UserLinks[e.Message.Author.Username];
-                string parsedMessage = ParseDiscordMessage(e.Message.Content);
+                var thisLink = FindUserLink(e.Message.Author.Username);
+                string parsedMessage = ParseDiscordMessage(e.Message.Content, e.Message.MentionedUsers);
 
                 int chunkSize = Config.Irc.MaxMessageSize;
                 if (parsedMessage.Length <= chunkSize)
