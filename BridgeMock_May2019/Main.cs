@@ -2,18 +2,19 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
+using ToP.Bridge.Helpers;
+using ToP.Bridge.Model.Config;
+using ToP.Bridge.Services;
 
-namespace BridgeMock_May2019
+namespace ToP.Bridge
 {
     public partial class Main : Form
     {
-        private BridgeService IrcLink;
-        private DiscordService DiscordLink;
-        private Glue glue;
+        private IrcService IrcLink { get; set; }
+        private DiscordService DiscordLink { get; set; }
+        private BridgeService glue { get; set; }
         delegate void TextBoxDelegate(string text);
         public Main()
         {
@@ -31,7 +32,7 @@ namespace BridgeMock_May2019
            }
              else
             {
-                TextBoxDelegate d = new TextBoxDelegate(InputLog);
+                TextBoxDelegate d = InputLog;
                 this.Invoke(d, new object[] { text });
             }
         }
@@ -48,7 +49,7 @@ namespace BridgeMock_May2019
             }
             else
             {
-                TextBoxDelegate d = new TextBoxDelegate(OutputLog);
+                TextBoxDelegate d = OutputLog;
                 this.Invoke(d, new object[] { text });
             }
         }
@@ -64,7 +65,7 @@ namespace BridgeMock_May2019
             }
             else
             {
-                TextBoxDelegate d = new TextBoxDelegate(EventLog);
+                TextBoxDelegate d = EventLog;
                 this.Invoke(d, new object[] { text });
             }
         }
@@ -80,7 +81,7 @@ namespace BridgeMock_May2019
             }
             else
             {
-                TextBoxDelegate d = new TextBoxDelegate(DiscordLog);
+                TextBoxDelegate d = DiscordLog;
                 this.Invoke(d, new object[] { text });
             }
         }
@@ -91,10 +92,10 @@ namespace BridgeMock_May2019
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            BridgeConfig config = LoadConfig();
-            IrcLink = new BridgeService(InputLog, OutputLog, EventLog, config.IRCServer);
+            BridgeConfig config = ConfigHelper.LoadConfig();
+            IrcLink = new IrcService(InputLog, OutputLog, EventLog, config.IRCServer);
             DiscordLink = new DiscordService(DiscordLog, config.DiscordServer);
-            glue = new Glue(IrcLink, DiscordLink, config);
+            glue = new BridgeService(IrcLink, DiscordLink, config);
 
             DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
@@ -105,17 +106,7 @@ namespace BridgeMock_May2019
             DiscordLink.MainAsync().GetAwaiter();
             IrcLink.StartBridge(); // Sort of Async.. Fix this later
         }
-        private BridgeConfig LoadConfig()
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(BridgeConfig));            
-            object obj = null;
-
-            using (TextReader reader = new StringReader(File.ReadAllText("config.xml")))
-            {
-                obj = serializer.Deserialize(reader);
-            }
-            return (BridgeConfig)obj;
-        }
+        
 
         private void BtnSend_Click(object sender, EventArgs e)
         {

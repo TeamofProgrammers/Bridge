@@ -6,12 +6,27 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FA431C11-BF78-46ED-BF22-58F1CBE82886}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BridgeMock_May2019</RootNamespace>
-    <AssemblyName>BridgeMock_May2019</AssemblyName>
+    <RootNamespace>ToP.Bridge</RootNamespace>
+    <AssemblyName>ToP.Bridge</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -219,23 +234,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BridgeConfig.cs" />
-    <Compile Include="BridgeService.cs" />
-    <Compile Include="Config\ChannelLink.cs" />
-    <Compile Include="Config\DiscordLinkConfig.cs" />
-    <Compile Include="Config\IrcLinkConfig.cs" />
-    <Compile Include="DiscordService.cs" />
-    <Compile Include="Events\DiscordEvents.cs" />
-    <Compile Include="Glue.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
+    <Compile Include="Model\Classes\IrcUser.cs" />
+    <Compile Include="Model\Config\BridgeConfig.cs" />
+    <Compile Include="Services\IrcService.cs" />
+    <Compile Include="Model\Config\Channel.cs" />
+    <Compile Include="Model\Config\ChannelMapping.cs" />
+    <Compile Include="Model\Config\DiscordLinkConfig.cs" />
+    <Compile Include="Model\Config\IrcLinkConfig.cs" />
+    <Compile Include="Services\DiscordService.cs" />
+    <Compile Include="Model\Events\Discord\DiscordUserUpdatedEventArgs.cs" />
+    <Compile Include="Services\BridgeService.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="Events\IrcEvents.cs" />
+    <Compile Include="Model\Events\Discord\DiscordGuildConnectedEventArgs.cs" />
+    <Compile Include="Model\Events\Discord\DiscordMessageEventArgs.cs" />
+    <Compile Include="Model\Events\Irc\IrcMessageEventArgs.cs" />
+    <Compile Include="Model\Events\Irc\IrcMessageEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Model\Classes\UserLink.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -247,6 +269,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -263,8 +286,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libsodium.dll" />
-    <Content Include="opus.dll" />
+    <Content Include="Config\config.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,16 +1,7 @@
 ﻿using System;
 
-namespace BridgeMock_May2019
+namespace ToP.Bridge.Model.Events.Irc
 {
-    public class IrcMessageEvent
-    {
-        // Example:
-        // :shiftybit PRIVMSG #top :test
-        public string User { get; set; }
-        public string Channel { get; set; }
-        public string Message { get; set; }
-
-    }
     public class IrcMessageEventArgs : EventArgs
     {
         private readonly IrcMessageEvent _channelMessage;

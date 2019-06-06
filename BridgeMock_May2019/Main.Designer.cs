@@ -1,4 +1,4 @@
-﻿namespace BridgeMock_May2019
+﻿namespace ToP.Bridge
 {
     partial class Main
     {

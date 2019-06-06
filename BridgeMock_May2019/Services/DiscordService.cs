@@ -3,47 +3,44 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using ToP.Bridge.Model.Config;
+using ToP.Bridge.Model.Events;
+using ToP.Bridge.Model.Events.Discord;
 
-namespace BridgeMock_May2019
+namespace ToP.Bridge.Services
 {
-    class DiscordService
+    public class DiscordService
     {
         private readonly DiscordSocketClient _client;
-        private List<Channel> _ChannelLinks;
-        static Action<string> _EventLog;
+        private List<Channel> _channelLinks;
+        static Action<string> EventLog;
         public event EventHandler<DiscordMessageEventArgs> OnChannelMessage;
         public event EventHandler<DiscordGuildConnectedEventArgs> OnGuildConnected;
         public event EventHandler<DiscordUserUpdatedEventArgs> OnUserUpdated;
         private DiscordLinkConfig Config;
-        public DiscordService(Action<string> EventLog, DiscordLinkConfig Config)
+        public DiscordService(Action<string> eventLog, DiscordLinkConfig config)
         {
-            _EventLog = EventLog;
-            _ChannelLinks = new List<Channel>();
+            EventLog = eventLog;
+            _channelLinks = new List<Channel>();
             _client = new DiscordSocketClient();
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
             _client.GuildMemberUpdated += UserUpdatedAsync;
-            this.Config = Config;
+            this.Config = config;
         }
 
         private async Task UserUpdatedAsync(SocketGuildUser previous, SocketGuildUser current)
         {
             EventHandler<DiscordUserUpdatedEventArgs> handler = OnUserUpdated;
-            if(null != handler)
-            {                
-                handler(this, new DiscordUserUpdatedEventArgs(previous, current));
-            }
-            _EventLog($"{current.Username} Status Updated");
+            handler?.Invoke(this, new DiscordUserUpdatedEventArgs(previous, current));
+            EventLog($"{current.Username} Status Updated");
         }
 
         private async Task GuildAvailableAsync(SocketGuild guild)
         {
-            _EventLog("Guild has become available");
+            EventLog("Guild has become available");
             EventHandler<DiscordGuildConnectedEventArgs> handler = OnGuildConnected;
-            if (null != handler)
-            {
-                handler(this, new DiscordGuildConnectedEventArgs(guild));
-            }
+            handler?.Invoke(this, new DiscordGuildConnectedEventArgs(guild));
         }
         private async Task MessageReceivedAsync(SocketMessage message)
         {
@@ -51,10 +48,7 @@ namespace BridgeMock_May2019
                 return;
 
             EventHandler<DiscordMessageEventArgs> handler = OnChannelMessage;
-            if (null != handler)
-            {
-                handler(this, new DiscordMessageEventArgs(message));
-            }
+            handler?.Invoke(this, new DiscordMessageEventArgs(message));
         }
 
         public async Task SendMessage(ulong GuildId, ulong DiscordChannelId, string Message)

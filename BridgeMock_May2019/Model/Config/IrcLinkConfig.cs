@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Xml;
-
-namespace BridgeMock_May2019
+﻿namespace ToP.Bridge.Model.Config
 {
     public class IrcLinkConfig
     {
@@ -13,15 +8,18 @@ namespace BridgeMock_May2019
         public string ServerIdentifier { get; set; }
         public string ServerName { get; set; }
         public string ServerDescription { get; set; }
+        /// <summary>
+        /// Suffix added to the end of every nickname on IRC
+        /// </summary>
         public string NicknameSuffix { get; set; }
         /// <summary>
         /// Largest message length supported by Irc Server.
         /// </summary>
-        public int MaxMessageSize { get; set; } // TODO: Add to config.xml
+        public int MaxMessageSize { get; set; } 
         /// <summary>
         /// Do we squeeze whitespace down prior to sending? (Condense multiple spaces to single space)
         /// </summary>
-        public bool SqueezeWhiteSpace { get; set; } // TODO: Add to config.xml        
+        public bool SqueezeWhiteSpace { get; set; } 
     }
 
 }
