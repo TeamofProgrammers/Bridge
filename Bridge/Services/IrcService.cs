@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Classes;
 using ToP.Bridge.Model.Config;
 using ToP.Bridge.Model.Events;
@@ -12,17 +13,21 @@ namespace ToP.Bridge.Services
 {
     public class IrcService
     {
+        private static Action<string> InputLog;
+        private static Action<string> OutputLog;
+        private static Action<string> EventLog;
+
         private TcpClient tcpClient;
         private NetworkStream ns;
         private StreamReader reader;
         private StreamWriter writer;
-        static Action<string> InputLog;
-        static Action<string> OutputLog;
-        static Action<string> EventLog;
         private List<IrcUser> IrcUsers;
         private IrcLinkConfig Config;
-        public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
         private static Random r = new Random();
+
+        public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
+        public event EventHandler<IrcMessageEventArgs> OnPrivateMessage;
+
         public IrcService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
         {
             InputLog = inputLog;
@@ -60,26 +65,23 @@ namespace ToP.Bridge.Services
             // Real IP address // This is the ip address, you can use *
             // : realname   // RealName appears after the colon, because this can have spaces in it.
             nick = nick.Trim();
-            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
-            if(query.ToList().Count == 0)
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower())).ToList();
+            if(query.Count == 0)
             {
-                int hopcount = 0;
-                int timestamp = 0;
-                string username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
-                string hostname = "discordBot";
-                string uid = RandomString(9);
-                int serviceStamp = 0;
-                string userMode = "+iwx";
-                string vhost = "*";
-                string ipCloak = "bcloaked"; // bridge cloak
-                string ipAddress = "*";
-                string mstr = $":{Config.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}";
+                var hopcount = 0;
+                var timestamp = 0;
+                var username = nick + "_" + r.Next(1000, 9999).ToString(); // *HACK*
+                var hostname = "discordBot";
+                var uid = RandomString(9);
+                var serviceStamp = 0;
+                var userMode = "+iwx";
+                var vhost = "*";
+                var ipCloak = "bcloaked"; // bridge cloak
+                var ipAddress = "*";
 
-                write(mstr);
-                var bridgeUser = new IrcUser();
-                bridgeUser.UID = uid;
-                bridgeUser.UserName = username;
-                bridgeUser.Nick = nick;
+                Write($":{Config.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}");
+
+                var bridgeUser = new IrcUser {UID = uid, UserName = username, Nick = nick};
                 IrcUsers.Add(bridgeUser);
                 return uid;
             }
@@ -92,12 +94,8 @@ namespace ToP.Bridge.Services
         }
         public IrcUser GetIrcUser(string nick)
         {
-            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower()));
-            if (query.ToList().Count != 0)
-            {
-                return query.FirstOrDefault();
-            }
-            return null;
+            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower())).ToList();
+            return query.Count != 0 ? query.FirstOrDefault() : null;
         }
         public void DisconnectUser(string nick)
         {
@@ -106,66 +104,43 @@ namespace ToP.Bridge.Services
             IrcUser user = GetIrcUser(nick);
             if(null != user)
             {
-                string mstr = $":{user.UID} QUIT :Quit: Discord User Left";
-                write(mstr);
+                Write($":{user.UID} QUIT :Quit: Discord User Left");
                 IrcUsers.Remove(user);
             }
 
         }
         public void ChangeNick(string oldNick, string nick)
         {
-            // Example
-            //:00257TR0R NICK bitshift 1559074834
-            //:00257TR0R NICK shiftybit 1559074836
-
             var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower())).ToList();
             if(query.Count == 0)
             {
                 EventLog($"Error: {oldNick} is not a valid user");
                 return;
             }
-            IrcUser user = query.FirstOrDefault();
-            string mstr = $":{user.UID} NICK {nick} 0";
-            write(mstr);
-            user.Nick = nick;
-
+            var user = query.FirstOrDefault();
+            if (user != null)
+            {
+                Write($":{user.UID} NICK {nick} 0");
+                user.Nick = nick;
+            }
         }
         public void JoinChannel(string nick, string channel)
         {
-            // example
-            // :darkscrypt JOIN #topdev
-            string mstr = $":{nick} JOIN {channel}";
-            write(mstr);
+            Write($":{nick} JOIN {channel}");
         }
         public void SendMessage(string nick, string message, string channel)
         {
-            // example
-            // :darkscrypt PRIVMSG #top :Hello World!
-            string mstr = $":{nick} PRIVMSG {channel} :{message}";
-            write(mstr);
+            Write($":{nick} PRIVMSG {channel} :{message}");
         }
         public void SendAction(string nick, string action, string channel)
         {
-            // example  :shiftybit PRIVMSG #TOP :ACTION flips a table
-            // string mstr = $":{nick} PRIVMSG {channel} :ACTION {action}";
-            char c1 = (char)1; // control char 1
-            string mstr = $":{nick} PRIVMSG {channel} :{c1}ACTION {action}{c1}"; 
-            write(mstr);
+            Write($":{nick} PRIVMSG {channel} :{IrcMessageHelper.ActionControlCode}ACTION {action}{IrcMessageHelper.ActionControlCode}");
         }
         public void SetAway(string nick, bool away)
         {
-            string mstr;
-            if (away)
-            {
-                mstr = $":{nick} AWAY discord user away";
-            }
-            else
-            {
-                mstr = $":{nick} AWAY";
-            }
-            write(mstr);
+            Write(away ? $":{nick} AWAY discord user away" : $":{nick} AWAY");
         }
-        private void write(string line)
+        private void Write(string line)
         {
             try
             {
@@ -178,57 +153,70 @@ namespace ToP.Bridge.Services
             }
             
         }
+        
         private void ChannelMessageReceived(string input)
         {
-            string[] tokens = input.Split(' ');
-            EventHandler<IrcMessageEventArgs> handler = OnChannelMessage;
-            if (null != handler)
+            var tokens = input.Split(' ');
+            var message = new IrcMessageEvent
             {
-                IrcMessageEvent channelMessage = new IrcMessageEvent();
-                channelMessage.User = tokens[0].Split(':')[1];
-                channelMessage.Channel = tokens[2];
-                string content = input.Split(new[] { ':' },3)[2];
-                channelMessage.Message = content;
-                handler(this, new IrcMessageEventArgs(channelMessage));
-            }
+                SourceUser = tokens[0].Split(':')[1],
+                IsPrivate = !tokens[2].StartsWith("#"),
+                Destination = tokens[2],
+                IsAction = tokens[3] == $":{IrcMessageHelper.ActionControlCode}ACTION"
+            };
+            var content = message.IsAction
+                ? input.Replace($"{IrcMessageHelper.ActionControlCode}ACTION ", string.Empty).Replace($"{IrcMessageHelper.ActionControlCode}", string.Empty).Split(new[] {':'}, 3)[2]
+                : input.Split(new[] {':'}, 3)[2];
+            message.Message = content;
+
+            (message.IsPrivate ? OnPrivateMessage : OnChannelMessage)?.Invoke(this, new IrcMessageEventArgs(message));
+            
         }
         private void BridgeMain()
         {
-            string input;
+            var input = string.Empty;
             while ((input = reader.ReadLine()) != null)
             {
                 InputLog(input);
-                string[] tokens = input.Split(' ');
+                var tokens = input.Split(' ');
                 if (tokens[0].ToUpper() == "PING")
                 {
-                    write("PONG " + tokens[1]);
+                    Write("PONG " + tokens[1]);
                 }
-                switch (tokens[1].ToUpper())
-                {
-                    case "PRIVMSG":
-                        // Example: 
-                        // :shiftybit PRIVMSG #top :test
-                        ChannelMessageReceived(input);
-                        break;
-                    default:
-                        break;
-                }
+                else
+                    switch (tokens[1].ToUpper())
+                    {
+                        case "PRIVMSG":
+                            ChannelMessageReceived(input);
+                            break;
+                        default:
+                            break;
+                    }
             }
             EventLog($"BridgeMain() Terminated. Connection to {Config.UplinkHost} has been lost. ");
         }
         public void StartBridge()
         {
-            tcpClient = new TcpClient(Config.UplinkHost,Config.UplinkPort);
-            ns = tcpClient.GetStream();
-            reader = new StreamReader(ns);
-            writer = new StreamWriter(ns);
-            write($"PASS {Config.UplinkPassword}");
-            write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
-            write($"PROTOCTL EAUTH={Config.ServerName}");
-            write($"PROTOCTL SID={Config.ServerIdentifier}");
-            write($"SERVER {Config.ServerName} 1 :{Config.ServerDescription}");
-            write($":{Config.ServerIdentifier} EOS");
+            CheckConnection();
+            Write($"PASS {Config.UplinkPassword}");
+            Write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
+            Write($"PROTOCTL EAUTH={Config.ServerName}");
+            Write($"PROTOCTL SID={Config.ServerIdentifier}");
+            Write($"SERVER {Config.ServerName} 1 :{Config.ServerDescription}");
+            Write($":{Config.ServerIdentifier} EOS");
             BridgeMain();
         }
+
+        public void CheckConnection()
+        {
+            if (tcpClient == null)
+            {
+                tcpClient = new TcpClient(Config.UplinkHost, Config.UplinkPort);
+                ns = tcpClient.GetStream();
+                reader = new StreamReader(ns);
+                writer = new StreamWriter(ns);
+            }
+        }
+
     }
 }

@@ -101,6 +101,7 @@ namespace ToP.Bridge
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
             DiscordLink.OnUserUpdated += glue.DiscordUserUpdated;
             IrcLink.OnChannelMessage += glue.IrcChannelMessage;
+            IrcLink.OnPrivateMessage += glue.IrcPrivateMessage;
 
             // Start the Async Processing
             DiscordLink.MainAsync().GetAwaiter();

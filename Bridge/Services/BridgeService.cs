@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Discord;
 using Discord.WebSocket;
+using ToP.Bridge.Extensions;
+using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Classes;
 using ToP.Bridge.Model.Config;
 using ToP.Bridge.Model.Events;
@@ -54,13 +56,24 @@ namespace ToP.Bridge.Services
         {
             //_EventLog("Channel Message Received");
             //_EventLog($"{e.ChannelMessage.User} {e.ChannelMessage.Channel} {e.ChannelMessage.Message}");
-            var link = FindIrcChannelLink(e.ChannelMessage.Channel);
+            var link = FindIrcChannelLink(e.Message.Destination);
             if (null != link) {
-                string parsedMessage = ParseIrcMessageForUsers(e.ChannelMessage.Message);
-                string message = $"<{e.ChannelMessage.User}> {parsedMessage}";
-                _ = DiscordLink.SendMessage(Config.DiscordServer.GuildId, link.Discord, message);
+                string parsedMessage = ParseIrcMessageForUsers(e.Message.Message);
+                string message = e.Message.IsAction
+                    ? $"_*{e.Message.SourceUser} {parsedMessage} *_"
+                    : $"<{e.Message.SourceUser}> {parsedMessage}";
+                _ = DiscordLink.SendMessage(Config.DiscordServer.GuildId, link.Discord, message.IrcToDiscordStrikeThrough().IrcToDiscordUnderline().IrcToDiscordItalics().IrcToDiscordBold());
             }
         }
+
+        public void IrcPrivateMessage(object s, IrcMessageEventArgs e)
+        {
+            IrcLink.SendMessage(
+                e.Message.Destination,
+                $"{IrcMessageHelper.BoldText("Automated Message")}: {IrcMessageHelper.ItalicizeText("This user is a generated representation of a user connect to our Discord server. Private messages currently are no supported. Check back in the future!")}",
+                e.Message.SourceUser);
+        }
+
         /// <summary>
         /// Data Sanitization and String Parser
         /// Cleans up a discord message prior to being sent over the IRC link. 
@@ -68,10 +81,10 @@ namespace ToP.Bridge.Services
         /// </summary>
         public string ParseDiscordMessage(string message, IReadOnlyCollection<SocketUser> users = null)
         {
-            var parsed = message.Replace("\r\n","");
-            parsed = parsed.Replace("\n", " ");
-            char bold = (char)2;  // CloudyOne: Fix me please. You are my only hope. Convert **text** to bold stuff in irc.
-            if(users.Count > 0)
+            var parsed = message.StripLineBreaks();
+
+
+            if(users?.Count > 0)
             {
                 foreach(var user in users)
                 {
@@ -82,29 +95,40 @@ namespace ToP.Bridge.Services
             }
             // :shiftybit PRIVMSG #top :asdf test  normal text
             if (Config.IRCServer.SqueezeWhiteSpace)
-                parsed = Regex.Replace(parsed, @"\s+", " ");
+                parsed = parsed.StripWhitespace();
 
-            return parsed;
+            return parsed.DiscordToIrcStrikeThrough().DiscordToIrcUnderline().DiscordToIrcBold().DiscordToIrcItalics();
         }
+
+        
+
         public void DiscordChannelMessage(object s, DiscordMessageEventArgs e)
         {
             var query = Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == e.Message.Channel.Id);
             if (query != null)
             {
                 var thisLink = FindUserLink(e.Message.Author.Username);
-                string parsedMessage = ParseDiscordMessage(e.Message.Content, e.Message.MentionedUsers);
-
-                int chunkSize = Config.IRCServer.MaxMessageSize;
+                var parsedMessage = ParseDiscordMessage(e.Message.Content, e.Message.MentionedUsers);
+                var isAction = parsedMessage.StartsWith(DiscordMessageHelper.ActionControl) && parsedMessage.EndsWith(DiscordMessageHelper.ActionControl);
+                var chunkSize = Config.IRCServer.MaxMessageSize;
                 if (parsedMessage.Length <= chunkSize)
                 {
-                    IrcLink.SendMessage(thisLink.IrcUid, parsedMessage, query.IRC);
+                    if (isAction)
+                        IrcLink.SendAction(thisLink.IrcUid, parsedMessage, query.IRC);
+                    else
+                        IrcLink.SendMessage(thisLink.IrcUid, parsedMessage, query.IRC);
                 }
                 else
                 {
-                    for(int i = 0; i < parsedMessage.Length; i += Config.IRCServer.MaxMessageSize)
+                    for(var i = 0; i < parsedMessage.Length; i += Config.IRCServer.MaxMessageSize)
                     {
                         if (i + Config.IRCServer.MaxMessageSize > parsedMessage.Length) chunkSize = parsedMessage.Length - i;
-                        IrcLink.SendMessage(thisLink.IrcUid, parsedMessage.Substring(i, chunkSize), query.IRC);
+                        var iterationMessage = parsedMessage.Substring(i, chunkSize);
+
+                        if (isAction)
+                            IrcLink.SendAction(thisLink.IrcUid, iterationMessage, query.IRC);
+                        else
+                            IrcLink.SendMessage(thisLink.IrcUid, iterationMessage, query.IRC);
                     }
                 }
             }

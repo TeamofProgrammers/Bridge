@@ -4,9 +4,10 @@
     {
         // Example:
         // :username PRIVMSG #channel :hello world
-        public string User { get; set; }
-        public string Channel { get; set; }
+        public string SourceUser { get; set; }
+        public string Destination { get; set; }
         public string Message { get; set; }
-
+        public bool IsAction { get; set; }
+        public bool IsPrivate { get; set; }
     }
 }
