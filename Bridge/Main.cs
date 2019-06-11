@@ -100,6 +100,8 @@ namespace ToP.Bridge
             DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
             DiscordLink.OnUserUpdated += glue.DiscordUserUpdated;
+            DiscordLink.OnUserJoin += glue.DiscordUserJoined;
+            DiscordLink.OnUserLeave += glue.DiscordUserLeave;
             IrcLink.OnChannelMessage += glue.IrcChannelMessage;
             IrcLink.OnPrivateMessage += glue.IrcPrivateMessage;
 

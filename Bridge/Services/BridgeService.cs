@@ -131,6 +131,11 @@ namespace ToP.Bridge.Services
                             IrcLink.SendMessage(thisLink.IrcUid, iterationMessage, query.IRC);
                     }
                 }
+
+                foreach (var attachment in e.Message.Attachments)
+                {
+                    IrcLink.SendMessage(thisLink.IrcUid, $"{attachment.Url}", query.IRC);
+                }
             }
         }
 
@@ -146,23 +151,7 @@ namespace ToP.Bridge.Services
                         var users = channel.Users;
                         foreach (var user in users.Where(x=> !x.Roles.Select(y=> y.Name).Intersect(Config.DiscordServer.IgnoredUserRoles).Any()))
                         {
-                            UserLink thisLink;
-                            if (UserLinks.ContainsKey(user.Username))
-                            {
-                                thisLink = UserLinks[user.Username];
-                            }
-                            else
-                            {
-                                thisLink = new UserLink(Config.IRCServer.NicknameSuffix)
-                                {
-                                    BaseUserName = user.Username,
-                                    DiscordUserName = user.Username,
-                                    DiscordUserId = user.Id
-                                };
-                                thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
-                                UserLinks.Add(user.Username, thisLink);
-                            }
-                            IrcLink.JoinChannel(thisLink.IrcUserName, link.IRC);                            
+                            JoinDiscordUserToIrcChannel(user, link);
                         }
                     }
                 }
@@ -176,10 +165,45 @@ namespace ToP.Bridge.Services
                 }
             }
         }
+
+        private void JoinDiscordUserToIrcChannel(SocketGuildUser user, Channel link)
+        {
+            UserLink thisLink;
+            if (UserLinks.ContainsKey(user.Username))
+            {
+                thisLink = UserLinks[user.Username];
+            }
+            else
+            {
+                thisLink = new UserLink(Config.IRCServer.NicknameSuffix)
+                {
+                    BaseUserName = user.Username,
+                    DiscordUserName = user.Username,
+                    DiscordUserId = user.Id
+                };
+                thisLink.IrcUid = IrcLink.RegisterNick(thisLink.IrcUserName);
+                UserLinks.Add(user.Username, thisLink);
+            }
+
+            IrcLink.JoinChannel(thisLink.IrcUserName, link.IRC);
+        }
+
+        private void PartDiscordUserFromIrcChannel(SocketGuildUser user, Channel link)
+        {
+            UserLink thisLink;
+            if (UserLinks.ContainsKey(user.Username))
+            {
+                thisLink = UserLinks[user.Username];
+                IrcLink.PartChannel(thisLink.IrcUserName, link.IRC);
+                UserLinks.Remove(user.Username);
+            }
+        }
+
         private bool DiscordUserConsideredOnline(UserStatus status)
         {
             return Config.DiscordServer.OnlineUserStatuses.Contains(status);
         }
+
         public void DiscordUserUpdated(object s, DiscordUserUpdatedEventArgs e)
         {
             if(!DiscordUserConsideredOnline(e.Previous.Status) && DiscordUserConsideredOnline(e.Current.Status))
@@ -190,6 +214,20 @@ namespace ToP.Bridge.Services
             {
                 IrcLink.SetAway(UserLinks[e.Current.Username].IrcUid, true);
             }
+        }
+
+        public void DiscordUserJoined(object s, DiscordUserJoinLeaveEventArgs e)
+        {
+            var channels = e.GuildUser.Guild.Channels.Where(x => x.Users.Select(y => y.Id).Contains(e.GuildUser.Id))
+                .Select(x => Config.DiscordServer.ChannelMapping.FirstOrDefault(y => y.Discord == x.Id));
+            foreach (var channel in channels.Where(x=> x != null))
+                JoinDiscordUserToIrcChannel(e.GuildUser, channel);
+        }
+
+        public void DiscordUserLeave(object s, DiscordUserJoinLeaveEventArgs e)
+        {
+            foreach (var channel in Config.DiscordServer.ChannelMapping)
+                PartDiscordUserFromIrcChannel(e.GuildUser, channel);
         }
     }
 }

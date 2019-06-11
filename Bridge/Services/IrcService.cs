@@ -128,6 +128,12 @@ namespace ToP.Bridge.Services
         {
             Write($":{nick} JOIN {channel}");
         }
+
+        public void PartChannel(string nick, string channel)
+        {
+            Write($":{nick} PART {channel}");
+        }
+
         public void SendMessage(string nick, string message, string channel)
         {
             Write($":{nick} PRIVMSG {channel} :{message}");

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BridgeConfig>
+  <IRCServer>
+    <UplinkHost>127.0.0.1</UplinkHost>
+    <UplinkPort>7001</UplinkPort>
+    <UplinkPassword>ulinepassword</UplinkPassword>
+    <ServerIdentifier>00E</ServerIdentifier>
+    <ServerName>subdomain.domain.com</ServerName>
+    <ServerDescription>Discord Bridge</ServerDescription>
+    <NicknameSuffix>♥</NicknameSuffix>
+    <MaxMessageSize>350</MaxMessageSize>
+    <SqueezeWhiteSpace>true</SqueezeWhiteSpace>
+  </IRCServer>
+  <DiscordServer>
+    <Token>VERYSECRETTOKEN Get from https://discordapp.com/developers/applications/ </Token>
+    <GuildId>000000000000000000</GuildId>
+    <IgnoredRoles></IgnoredRoles>
+    <OnlineStatuses>AFK,Idle,Online</OnlineStatuses>
+    <ChannelMapping>
+      <Channel>
+        <IRC>#channel1</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>
+      <Channel>
+        <IRC>#channel2</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>
+      <Channel>
+        <IRC>#channel3</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>
+    </ChannelMapping>
+  </DiscordServer>
+</BridgeConfig>
