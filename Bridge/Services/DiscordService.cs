@@ -34,28 +34,24 @@ namespace ToP.Bridge.Services
         }
         private async Task UserJoinedGuild(SocketGuildUser user)
         {
-            EventHandler<DiscordUserJoinLeaveEventArgs> handler = OnUserJoin;
-            handler?.Invoke(this, new DiscordUserJoinLeaveEventArgs(user));
+            OnUserJoin?.Invoke(this, new DiscordUserJoinLeaveEventArgs(user));
             EventLog($"{user.Username} has joined the guild");
         }
         private async Task UserLeftGuild(SocketGuildUser user)
         {
-            EventHandler<DiscordUserJoinLeaveEventArgs> handler = OnUserLeave;
-            handler?.Invoke(this, new DiscordUserJoinLeaveEventArgs(user));
+            OnUserLeave?.Invoke(this, new DiscordUserJoinLeaveEventArgs(user));
             EventLog($"{user.Username} has left guild");
         }
         private async Task UserUpdatedAsync(SocketGuildUser previous, SocketGuildUser current)
         {
-            EventHandler<DiscordUserUpdatedEventArgs> handler = OnUserUpdated;
-            handler?.Invoke(this, new DiscordUserUpdatedEventArgs(previous, current));
+            OnUserUpdated?.Invoke(this, new DiscordUserUpdatedEventArgs(previous, current));
             EventLog($"{current.Username} Status Updated");
         }
 
         private async Task GuildAvailableAsync(SocketGuild guild)
         {
             EventLog("Guild has become available");
-            EventHandler<DiscordGuildConnectedEventArgs> handler = OnGuildConnected;
-            handler?.Invoke(this, new DiscordGuildConnectedEventArgs(guild));
+            OnGuildConnected?.Invoke(this, new DiscordGuildConnectedEventArgs(guild));
         }
         private async Task MessageReceivedAsync(SocketMessage message)
         {

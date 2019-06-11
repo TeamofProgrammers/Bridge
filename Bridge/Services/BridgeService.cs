@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ToP.Bridge.Extensions;
@@ -228,6 +230,18 @@ namespace ToP.Bridge.Services
         {
             foreach (var channel in Config.DiscordServer.ChannelMapping)
                 PartDiscordUserFromIrcChannel(e.GuildUser, channel);
+        }
+
+        public async void IrcServerDisconnect(object sender, EventArgs e)
+        {
+            foreach (var channel in Config.DiscordServer.ChannelMapping)
+                await DiscordLink.SendMessage(Config.DiscordServer.GuildId, channel.Discord,
+                    $"{DiscordMessageHelper.BoldControlCode}Bridge Down:{DiscordMessageHelper.BoldControlCode} Irc Connection Severed. Attempting to reconnect...");
+        }
+
+        public void UpdateIrcLink(IrcService ircLink)
+        {
+            this.IrcLink = ircLink;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace ToP.Bridge.Services
 
         public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
         public event EventHandler<IrcMessageEventArgs> OnPrivateMessage;
+        public event EventHandler<EventArgs> OnServerDisconnect;
 
         public IrcService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
         {
@@ -140,11 +141,13 @@ namespace ToP.Bridge.Services
         }
         public void SendAction(string nick, string action, string channel)
         {
+            
             Write($":{nick} PRIVMSG {channel} :{IrcMessageHelper.ActionControlCode}ACTION {action}{IrcMessageHelper.ActionControlCode}");
         }
         public void SetAway(string nick, bool away)
         {
             Write(away ? $":{nick} AWAY discord user away" : $":{nick} AWAY");
+            
         }
         private void Write(string line)
         {
@@ -156,6 +159,7 @@ namespace ToP.Bridge.Services
             } 
             catch (System.IO.IOException) {
                 EventLog($"Error: Disconnected from {Config.UplinkHost}");
+                OnServerDisconnect.Invoke(this, new EventArgs());
             }
             
         }
@@ -181,24 +185,32 @@ namespace ToP.Bridge.Services
         private void BridgeMain()
         {
             var input = string.Empty;
-            while ((input = reader.ReadLine()) != null)
+            try
             {
-                InputLog(input);
-                var tokens = input.Split(' ');
-                if (tokens[0].ToUpper() == "PING")
+                while ((input = reader.ReadLine()) != null)
                 {
-                    Write("PONG " + tokens[1]);
-                }
-                else
-                    switch (tokens[1].ToUpper())
+                    InputLog(input);
+                    var tokens = input.Split(' ');
+                    if (tokens[0].ToUpper() == "PING")
                     {
-                        case "PRIVMSG":
-                            ChannelMessageReceived(input);
-                            break;
-                        default:
-                            break;
+                        Write("PONG " + tokens[1]);
                     }
+                    else
+                        switch (tokens[1].ToUpper())
+                        {
+                            case "PRIVMSG":
+                                ChannelMessageReceived(input);
+                                break;
+                            default:
+                                break;
+                        }
+                }
             }
+            catch (Exception err)
+            {
+                
+            }
+
             EventLog($"BridgeMain() Terminated. Connection to {Config.UplinkHost} has been lost. ");
         }
         public void StartBridge()
@@ -218,7 +230,7 @@ namespace ToP.Bridge.Services
             if (tcpClient == null)
             {
                 tcpClient = new TcpClient(Config.UplinkHost, Config.UplinkPort);
-                ns = tcpClient.GetStream();
+                ns = tcpClient?.GetStream();
                 reader = new StreamReader(ns);
                 writer = new StreamWriter(ns);
             }
