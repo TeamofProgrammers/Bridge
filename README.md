@@ -17,7 +17,7 @@
   - [X] Or we can inform the irc user sending the message that this is not supported.
   - [ ] It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
 - [ ] Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
-  - [ ] I would like for it to show netsplit when the service is killed/rejoined. 
+  - [X] I would like for it to show netsplit when the service is killed/rejoined. 
 - [X] Rename from BridgeMock_May2019 to something less... boring. 
 - [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
 - [X] Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
