@@ -14,7 +14,7 @@
 - [X] Add option to ignore discord bots.
 - [ ] What happens when a discord user receives a private message on irc?
   - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
-  - [ ] Or we can inform the irc user sending the message that this is not supported.
+  - [X] Or we can inform the irc user sending the message that this is not supported.
   - [ ] It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
 - [ ] Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
   - [ ] I would like for it to show netsplit when the service is killed/rejoined. 
@@ -78,37 +78,38 @@ ulines {
 
 **Config.Xml**
 ```XML
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>    
 <BridgeConfig>
-	<IRCServer>
-		<UplinkHost>127.0.0.1</UplinkHost>
-		<UplinkPort>5555</UplinkPort>
-		<UplinkPassword>GoldenRetriever</UplinkPassword>
-		<ServerIdentifier>00D</ServerIdentifier>
-		<ServerName>cloud.teamofprogrammers.com</ServerName>
-		<ServerDescription>Discord Bridge</ServerDescription>
-	</IRCServer>
-	<DiscordServer>
-		<Token>Discord Token Here</Token>
-		<GuildID>294590221843038209</GuildID>
-		<ChannelMapping>
-			<Channel>
-				<IRC>#Top</IRC>
-				<Discord>294593199710797824</Discord>
-			</Channel>
-			<Channel>
-				<IRC>#politics</IRC>
-				<Discord>299967713948860417</Discord>
-			</Channel>
-			<Channel>
-				<IRC>#Bot-Test</IRC>
-				<Discord>388908063014387714</Discord>
-			</Channel>
-			<Channel>
-				<IRC>#PLN</IRC>
-				<Discord>400130756812472320</Discord>
-			</Channel>
-		</ChannelMapping>
-	</DiscordServer>
+  <IRCServer>
+    <UplinkHost>127.0.0.1</UplinkHost>
+    <UplinkPort>7001</UplinkPort>
+    <UplinkPassword>ulinepassword</UplinkPassword>
+    <ServerIdentifier>00E</ServerIdentifier>
+    <ServerName>subdomain.domain.com</ServerName>
+    <ServerDescription>Discord Bridge</ServerDescription>
+    <NicknameSuffix>♥</NicknameSuffix>
+    <MaxMessageSize>350</MaxMessageSize>
+    <SqueezeWhiteSpace>true</SqueezeWhiteSpace>
+  </IRCServer>
+  <DiscordServer>
+    <Token>VERYSECRETTOKEN Get from https://discordapp.com/developers/applications/ </Token>
+    <GuildId>000000000000000000</GuildId>
+    <IgnoredRoles></IgnoredRoles>
+    <OnlineStatuses>AFK,Idle,Online</OnlineStatuses>
+    <ChannelMapping>
+      <Channel>
+        <IRC>#channel1</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>
+      <Channel>
+        <IRC>#channel2</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>
+      <Channel>
+        <IRC>#channel3</IRC>
+        <Discord>000000000000000000</Discord>
+      </Channel>      
+    </ChannelMapping>
+  </DiscordServer>
 </BridgeConfig>
 ```
