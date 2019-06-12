@@ -232,6 +232,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Discord\DiscordUserExtensions.cs" />
     <Compile Include="Extensions\IntegerExtensions.cs" />
     <Compile Include="Extensions\IrcToDiscordExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

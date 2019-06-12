@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ToP.Bridge.Extensions;
+using ToP.Bridge.Extensions.Discord;
 using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Classes;
 using ToP.Bridge.Model.Config;
@@ -208,14 +209,25 @@ namespace ToP.Bridge.Services
 
         public void DiscordUserUpdated(object s, DiscordUserUpdatedEventArgs e)
         {
-            if(!DiscordUserConsideredOnline(e.Previous.Status) && DiscordUserConsideredOnline(e.Current.Status))
+            var bridgeUser = UserLinks[e.Current.Username];
+            if (!DiscordUserConsideredOnline(e.Previous.Status) && DiscordUserConsideredOnline(e.Current.Status))
             {
-                IrcLink.SetAway(UserLinks[e.Current.Username].IrcUid, false);
+                IrcLink.SetAway(bridgeUser.IrcUid, false);
             }
             else if(DiscordUserConsideredOnline(e.Previous.Status) && !DiscordUserConsideredOnline(e.Current.Status))
             {
-                IrcLink.SetAway(UserLinks[e.Current.Username].IrcUid, true);
+                IrcLink.SetAway(bridgeUser.IrcUid, true);
             }
+
+            // Join new channels
+            foreach (var channel in e.NewChannels)
+                IrcLink.JoinChannel(bridgeUser.IrcUserName,
+                    Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == channel.Id)?.IRC);
+
+            // Leave removed channels
+            foreach (var channel in e.RemovedChannels)
+                IrcLink.PartChannel(bridgeUser.IrcUserName,
+                    Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == channel.Id)?.IRC);
         }
 
         public void DiscordUserJoined(object s, DiscordUserJoinLeaveEventArgs e)
