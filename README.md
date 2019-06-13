@@ -1,8 +1,15 @@
 # Bridge
 ## ToDo:
-- [X] Handle Usernames With Spaces
 - [ ] General Input / Output validation. 
   - [ ] Discord can send a new line with alt+enter. How does irc handle this? 
+- [ ] Config File
+  - [ ] Have process check for changes to the Config file and handle any changes accordingly
+    - [ ] Bridging of new channels
+    - [ ] Handle new role exceptions
+    - [ ] Change of suffix
+  - [ ] Allow channels to be configured individually for showing offline users in their channel
+- [ ] IRC Responses
+  - [ ] WHOIS on discord users should be informative
 - [ ] What happens when User gets kicked from IRC, but still are in discord?
 - [ ] What happens when user changes nick on discord
   - [ ] Currently doesn't matter, as I am looking at their username and ignoring thier chosen nickname.
@@ -11,19 +18,15 @@
 - [ ] What happens with nickname collisions?
   - [X] Implement a prefix / suffix for nick names.
   - [ ] Implement IRC server level check prior to registration of user. Verify that we aren't going to /kill somebody. 
-- [X] Add option to ignore discord bots.
 - [ ] What happens when a discord user receives a private message on irc?
   - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
   - [X] Or we can inform the irc user sending the message that this is not supported.
   - [ ] It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
 - [ ] Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
   - [X] I would like for it to show netsplit when the service is killed/rejoined. 
-- [X] Rename from BridgeMock_May2019 to something less... boring. 
 - [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
-- [X] Get the config.xml parsing logic out of Discord.cs and BridgeService.cs, isolate this entirely in the entry point of the program. These libraries shouldn't be reading from a config file, as it is outside of their scope. 
 - [ ] Add SSL/TLS options for connection.
 - [ ] Allow for Hostnames to be used in the ServerHost section. 
-- [X] Put everything back in bin/debug, as things are just becoming messy now. 
 - [ ] Remove the Scaffolding / Test GUI. (After Everything is working)
 ## Setup
 ### Requirements
