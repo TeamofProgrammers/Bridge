@@ -92,6 +92,11 @@ namespace ToP.Bridge
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            InitializeBridge();
+        }
+
+        private void InitializeBridge()
+        {
             BridgeConfig config = ConfigHelper.LoadConfig();
             IrcLink = new IrcService(InputLog, OutputLog, EventLog, config.IRCServer);
             DiscordLink = new DiscordService(DiscordLog, config.DiscordServer);
@@ -100,13 +105,22 @@ namespace ToP.Bridge
             DiscordLink.OnChannelMessage += glue.DiscordChannelMessage;
             DiscordLink.OnGuildConnected += glue.DiscordGuildConnected;
             DiscordLink.OnUserUpdated += glue.DiscordUserUpdated;
+            DiscordLink.OnUserJoin += glue.DiscordUserJoined;
+            DiscordLink.OnUserLeave += glue.DiscordUserLeave;
             IrcLink.OnChannelMessage += glue.IrcChannelMessage;
+            IrcLink.OnPrivateMessage += glue.IrcPrivateMessage;
+            IrcLink.OnServerDisconnect += glue.IrcServerDisconnect;
+            IrcLink.OnServerDisconnect += IrcLink_OnServerDisconnect;
 
             // Start the Async Processing
             DiscordLink.MainAsync().GetAwaiter();
             IrcLink.StartBridge(); // Sort of Async.. Fix this later
         }
-        
+
+        private void IrcLink_OnServerDisconnect(object sender, EventArgs e)
+        {
+            InitializeBridge();
+        }
 
         private void BtnSend_Click(object sender, EventArgs e)
         {

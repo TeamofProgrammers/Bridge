@@ -1,4 +1,5 @@
-﻿<BridgeConfig>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BridgeConfig>
   <IRCServer>
     <UplinkHost>127.0.0.1</UplinkHost>
     <UplinkPort>7001</UplinkPort>
@@ -27,7 +28,7 @@
       <Channel>
         <IRC>#channel3</IRC>
         <Discord>000000000000000000</Discord>
-      </Channel>      
+      </Channel>
     </ChannelMapping>
   </DiscordServer>
 </BridgeConfig>
