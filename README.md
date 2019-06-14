@@ -1,7 +1,7 @@
 # Bridge
 ## ToDo:
-- [ ] General Input / Output validation. 
-  - [ ] Discord can send a new line with alt+enter. How does irc handle this? 
+- [X] General Input / Output validation. 
+  - [X] Discord can send a new line with alt+enter. How does irc handle this? 
 - [ ] Config File
   - [ ] Have process check for changes to the Config file and handle any changes accordingly
     - [ ] Bridging of new channels
@@ -13,11 +13,11 @@
 - [ ] What happens when User gets kicked from IRC, but still are in discord?
 - [ ] What happens when user changes nick on discord
   - [ ] Currently doesn't matter, as I am looking at their username and ignoring thier chosen nickname.
-- [ ] What happens when a user is @ referenced in discord? Do we translate that on irc?
-- [ ] What happens when a user is highlighted in irc? do we highlight them in discord?
-- [ ] What happens with nickname collisions?
-  - [X] Implement a prefix / suffix for nick names.
-  - [ ] Implement IRC server level check prior to registration of user. Verify that we aren't going to /kill somebody. 
+- [X] What happens when a user is @ referenced in discord? Do we translate that on irc?
+- [X] What happens when a user is highlighted in irc? do we highlight them in discord?
+- [X] Implement a prefix / suffix for nick names.
+- [ ] Make Prefix / Suffix Optional
+     [ ] Implement IRC server level check prior to registration of user. Verify that we aren't going to /kill somebody. 
 - [ ] What happens when a discord user receives a private message on irc?
   - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
   - [X] Or we can inform the irc user sending the message that this is not supported.
