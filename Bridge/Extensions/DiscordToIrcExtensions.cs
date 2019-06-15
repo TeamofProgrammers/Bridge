@@ -19,7 +19,7 @@ namespace ToP.Bridge.Extensions
 
         public static string DiscordToIrcAction(this string str)
         {
-            return str.ReplaceLastOccurrence("_", "").ReplaceFirstOccurrence("_","");
+            return str.ReplaceLastOccurrence(DiscordMessageHelper.ActionControl, "").ReplaceFirstOccurrence(DiscordMessageHelper.ActionControl,"");
         }
 
         public static string DiscordToIrcItalics(this string str)
