@@ -17,6 +17,11 @@ namespace ToP.Bridge.Extensions
             return value;
         }
 
+        public static string DiscordToIrcAction(this string str)
+        {
+            return str.ReplaceLastOccurrence("_", "").ReplaceFirstOccurrence("_","");
+        }
+
         public static string DiscordToIrcItalics(this string str)
         {
             if (str.OccurrenceCount(DiscordMessageHelper.ItalicsControlCode) < 2)
@@ -47,7 +52,6 @@ namespace ToP.Bridge.Extensions
                 ? str.ReplaceLastOccurrence(DiscordMessageHelper.StrikeThroughControlCode, _tempReplacement).Replace(DiscordMessageHelper.StrikeThroughControlCode, IrcMessageHelper.StrikeThroughControlCode).Replace(_tempReplacement, DiscordMessageHelper.StrikeThroughControlCode)
                 : str;
         }
-
 
     }
 }

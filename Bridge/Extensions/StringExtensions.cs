@@ -16,6 +16,16 @@ namespace ToP.Bridge.Extensions
             return Regex.Replace(str, @"\s+", " ");
         }
 
+        public static string ReplaceFirstOccurrence(this string source, string find, string replace)
+        {
+            var place = source.IndexOf(find);
+
+            if (place == -1)
+                return source;
+
+            return source.Remove(place, find.Length).Insert(place, replace);
+        }
+
         public static string ReplaceLastOccurrence(this string source, string find, string replace)
         {
             var place = source.LastIndexOf(find);

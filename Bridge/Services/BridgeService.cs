@@ -113,6 +113,7 @@ namespace ToP.Bridge.Services
                 var thisLink = FindUserLink(e.Message.Author.Username);
                 var parsedMessage = ParseDiscordMessage(e.Message.Content, e.Message.MentionedUsers);
                 var isAction = parsedMessage.StartsWith(DiscordMessageHelper.ActionControl) && parsedMessage.EndsWith(DiscordMessageHelper.ActionControl);
+                if (isAction) parsedMessage = parsedMessage.DiscordToIrcAction();
                 var chunkSize = Config.IRCServer.MaxMessageSize;
                 if (parsedMessage.Length <= chunkSize)
                 {
