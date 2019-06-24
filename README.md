@@ -89,4 +89,4 @@ ulines {
 </BridgeConfig>
 ```
 ## Contributing
-If you want to jump in, check out items in our [TODO] list, check for any open issues, or just run the code and provide us with feedback and bug reports. Help us keep IRC alive. 
+If you want to jump in, check out items in our [TODO List](https://github.com/TeamofProgrammers/Bridge/blob/master/TODO.md), check for any open issues, or just run the code and provide us with feedback and bug reports. Help us keep IRC alive. 
