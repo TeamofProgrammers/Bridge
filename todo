@@ -1,0 +1,29 @@
+## ToDo:
+- [X] General Input / Output validation. 
+  - [X] Discord can send a new line with alt+enter. How does irc handle this? 
+- [ ] Config File
+  - [ ] Have process check for changes to the Config file and handle any changes accordingly
+    - [ ] Bridging of new channels
+    - [ ] Handle new role exceptions
+    - [ ] Change of suffix
+  - [ ] Allow channels to be configured individually for showing offline users in their channel
+- [ ] IRC Responses
+  - [ ] WHOIS on discord users should be informative
+- [ ] What happens when User gets kicked from IRC, but still are in discord?
+- [ ] What happens when user changes nick on discord
+  - [ ] Currently doesn't matter, as I am looking at their username and ignoring thier chosen nickname.
+- [X] What happens when a user is @ referenced in discord? Do we translate that on irc?
+- [X] What happens when a user is highlighted in irc? do we highlight them in discord?
+- [X] Implement a prefix / suffix for nick names.
+- [ ] Make Prefix / Suffix Optional
+     [ ] Implement IRC server level check prior to registration of user. Verify that we aren't going to /kill somebody. 
+- [ ] What happens when a discord user receives a private message on irc?
+  - [ ] We could send them a PM from the bot, notifying them they have a message on irc...
+  - [X] Or we can inform the irc user sending the message that this is not supported.
+  - [ ] It would be possible to have the bot relay the message from that user, and then offer a text based ui for switching between private message targets
+- [ ] Is there a message for netsplits, or do clients just handle this automatically when they see a large quantity of joins/parts? 
+  - [X] I would like for it to show netsplit when the service is killed/rejoined. 
+- [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
+- [ ] Add SSL/TLS options for connection.
+- [ ] Allow for Hostnames to be used in the ServerHost section. 
+- [ ] Remove the Scaffolding / Test GUI. (After Everything is working)
