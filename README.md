@@ -1,14 +1,16 @@
+## About
+This bridge emulates an IRC leaf server. Users joined to the leaf are secretly discord users, however from the perspective of the hub, they are just normal users. 
 ## Setup
 ### Requirements
 * UnrealIRCD - This product not tested on other animals. 
-* It should go without saying, but you will need oper / root priviledges on the server this service is installed on. The service operates a bit like a server link between a 
+* You will need oper / root priviledges on the server this service is installed on. The service operates a bit like a server link between a hub and a leaf.  
 * Windows or Mono. .Net Core might work, but 🤷
 * This currently Relies on WinForms. During the early stages of development, I'm initializing the libraries from here, rather than from a service or console application, at least until I solidify how I want the library to work. Think of this as a scaffolding that will be removed once the building is complete. 
 
 ### Build the Project
-* Open the BridgeMock_May2019.sln file in Visual Studio.
+* Open the Bridge.sln file in Visual Studio.
 * Build the project.
-* After building, BridgeMock_May2019.exe may be moved to wherever you like. Copy this and all DLL files from build directory into their own home (or just leave them.. I don't really care) 
+* After building, Bridge.exe may be moved to wherever you like. Copy this and all DLL files from build directory into their own home (or just leave them.. I don't really care) 
 
 ### Get your Discord Token
 * There are dozens of guides out there on how to do this. Use google. 
@@ -42,7 +44,7 @@ ulines {
 
 
 ### Setup the XML Configuration file
-*  Place config.xml in the same directory as BridgeMock_May2019.exe.
+*  Place config.xml in the same directory as Bridge.exe.
 * Channel Mappings:
   * IRC is the channel name on the IRC server
   * Discord is the channel UID on the Discord server.
@@ -86,3 +88,5 @@ ulines {
   </DiscordServer>
 </BridgeConfig>
 ```
+## Contributing
+If you want to jump in, check out items in our [TODO List](https://github.com/TeamofProgrammers/Bridge/blob/master/TODO.md), check for any open issues, or just run the code and provide us with feedback and bug reports. Help us keep IRC alive. 
