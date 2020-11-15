@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -35,7 +36,14 @@ namespace ToP.Bridge.Services
             _client.ChannelUpdated += _client_ChannelUpdated;
             _client.UserLeft += UserLeftGuild;
             _client.UserJoined += UserJoinedGuild;
+            _client.LoggedOut += _client_LoggedOut;
             this.Config = config;
+        }
+
+        private async Task _client_LoggedOut()
+        {
+            await Task.Delay(5000);
+            await MainAsync();
         }
 
         private async Task _client_ChannelUpdated(SocketChannel previous, SocketChannel current)

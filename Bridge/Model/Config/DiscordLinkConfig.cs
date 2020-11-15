@@ -20,8 +20,9 @@ namespace ToP.Bridge.Model.Config
             {
                 try
                 {
-                    var statuses = OnlineStatuses.Split(',').ToList();
+                    var statuses = OnlineStatuses?.Split(',').ToList();
                     var onlineStatuses = new List<UserStatus>();
+                    if (statuses != null)
                     foreach (var status in statuses)
                     {
                         UserStatus userStatus;
@@ -45,7 +46,7 @@ namespace ToP.Bridge.Model.Config
             {
                 try
                 {
-                    return IgnoredRoles.Split(',').ToList();
+                    return IgnoredRoles == null ? new List<string>() : IgnoredRoles.Split(',').ToList();
                 }
                 catch
                 {
