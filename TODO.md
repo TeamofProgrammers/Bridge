@@ -25,5 +25,5 @@
   - [X] I would like for it to show netsplit when the service is killed/rejoined. 
 - [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
 - [ ] Add SSL/TLS options for connection.
-- [ ] Allow for Hostnames to be used in the ServerHost section. 
+- [X] Allow for Hostnames to be used in the ServerHost section. 
 - [ ] Remove the Scaffolding / Test GUI. (After Everything is working)
