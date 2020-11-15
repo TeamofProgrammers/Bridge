@@ -91,7 +91,7 @@ namespace ToP.Bridge.Services
             {
                 foreach(var user in users)
                 {
-                    string replacement = $"<@{user.Id}>";
+                    string replacement = $"<@!{user.Id}>";
                     var mentionedLink = FindUserLink(user.Username);
                     parsed = parsed.Replace(replacement, mentionedLink.IrcUserName);
                 }
