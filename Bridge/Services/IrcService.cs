@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Classes;
 using ToP.Bridge.Model.Config;
-using ToP.Bridge.Model.Events;
 using ToP.Bridge.Model.Events.Irc;
 
 namespace ToP.Bridge.Services
 {
     public class IrcService
     {
-        private static Action<string> InputLog;
-        private static Action<string> OutputLog;
-        private static Action<string> EventLog;
+        private static Action<string> IrcLog;
 
         private TcpClient tcpClient;
         private NetworkStream ns;
@@ -29,13 +27,19 @@ namespace ToP.Bridge.Services
         public event EventHandler<IrcMessageEventArgs> OnPrivateMessage;
         public event EventHandler<EventArgs> OnServerDisconnect;
 
-        public IrcService(Action<string> inputLog, Action<string> outputLog, Action<string> eventLog, IrcLinkConfig Config)
+        public IrcService(Action<string> ircLog, IrcLinkConfig Config)
         {
-            InputLog = inputLog;
-            OutputLog = outputLog;
-            EventLog = eventLog;
+            IrcLog = ircLog;
             IrcUsers = new List<IrcUser>();
             this.Config = Config;
+        }
+
+        public int UserCount
+        {
+            get
+            {
+                return IrcUsers.Select(x => x.UserName).Distinct().ToList().Count;
+            }
         }
 
         public static string RandomString(int length)
@@ -66,8 +70,8 @@ namespace ToP.Bridge.Services
             // Real IP address // This is the ip address, you can use *
             // : realname   // RealName appears after the colon, because this can have spaces in it.
             nick = nick.Trim();
-            var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(nick.ToLower())).ToList();
-            if(query.Count == 0)
+            var user = IrcUsers.FirstOrDefault(n => n.Nick.ToLower().Equals(nick.ToLower()));
+            if(user == null)
             {
                 var hopcount = 0;
                 var timestamp = 0;
@@ -82,15 +86,12 @@ namespace ToP.Bridge.Services
 
                 Write($":{Config.ServerIdentifier} UID {nick} {hopcount} {timestamp} {username} {hostname} {uid} {serviceStamp} {userMode} {vhost} {ipCloak} {ipAddress} :{nick}");
 
-                var bridgeUser = new IrcUser {UID = uid, UserName = username, Nick = nick};
-                IrcUsers.Add(bridgeUser);
-                return uid;
+                user = new IrcUser(uid, username, nick);
+                IrcUsers.Add(user);
+                
             }
-            else
-            {
-                EventLog($"Error: {nick} is already registered ");
-                return null;
-            }
+            return user.UID;
+            
 
         }
         public IrcUser GetIrcUser(string nick)
@@ -115,7 +116,7 @@ namespace ToP.Bridge.Services
             var query = IrcUsers.Where(n => n.Nick.ToLower().Equals(oldNick.ToLower())).ToList();
             if(query.Count == 0)
             {
-                EventLog($"Error: {oldNick} is not a valid user");
+                IrcLog($"Error: {oldNick} is not a valid user");
                 return;
             }
             var user = query.FirstOrDefault();
@@ -125,6 +126,7 @@ namespace ToP.Bridge.Services
                 user.Nick = nick;
             }
         }
+
         public void JoinChannel(string nick, string channel)
         {
             Write($":{nick} JOIN {channel}");
@@ -137,29 +139,29 @@ namespace ToP.Bridge.Services
 
         public void SendMessage(string nick, string message, string channel)
         {
-            Write($":{nick} PRIVMSG {channel} :{message}");
+            Write($":{nick} PRIVMSG {channel} :{message}", channel.Contains("#"));
         }
         public void SendAction(string nick, string action, string channel)
         {
-            
-            Write($":{nick} PRIVMSG {channel} :{IrcMessageHelper.ActionControlCode}ACTION {action}{IrcMessageHelper.ActionControlCode}");
+            Write($":{nick} PRIVMSG {channel} :{IrcMessageHelper.ActionControlCode}ACTION {action}{IrcMessageHelper.ActionControlCode}", channel.Contains("#"));
         }
         public void SetAway(string nick, bool away)
         {
             Write(away ? $":{nick} AWAY discord user away" : $":{nick} AWAY");
             
         }
-        private void Write(string line)
+        private void Write(string line, bool console = true)
         {
             try
             {
                 writer.WriteLine(line);
                 writer.Flush();
-                OutputLog(line);
+                if (console)
+                    IrcLog(line);
             } 
             catch (System.IO.IOException) {
-                EventLog($"Error: Disconnected from {Config.UplinkHost}");
-                OnServerDisconnect.Invoke(this, new EventArgs());
+                IrcLog($"Error: Disconnected from {Config.UplinkHost}");
+                OnServerDisconnect?.Invoke(this, new EventArgs());
             }
             
         }
@@ -178,7 +180,7 @@ namespace ToP.Bridge.Services
                 ? input.Replace($"{IrcMessageHelper.ActionControlCode}ACTION ", string.Empty).Replace($"{IrcMessageHelper.ActionControlCode}", string.Empty).Split(new[] {':'}, 3)[2]
                 : input.Split(new[] {':'}, 3)[2];
             message.Message = content;
-
+            if (!message.IsPrivate) IrcLog(input);
             (message.IsPrivate ? OnPrivateMessage : OnChannelMessage)?.Invoke(this, new IrcMessageEventArgs(message));
             
         }
@@ -189,7 +191,7 @@ namespace ToP.Bridge.Services
             {
                 while ((input = reader.ReadLine()) != null)
                 {
-                    InputLog(input);
+                    //IrcLog(input);
                     var tokens = input.Split(' ');
                     if (tokens[0].ToUpper() == "PING")
                     {
@@ -211,17 +213,17 @@ namespace ToP.Bridge.Services
                 
             }
 
-            EventLog($"BridgeMain() Terminated. Connection to {Config.UplinkHost} has been lost. ");
+            IrcLog($"BridgeMain() Terminated. Connection to {Config.UplinkHost} has been lost. ");
         }
         public void StartBridge()
         {
             CheckConnection();
-            Write($"PASS {Config.UplinkPassword}");
-            Write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK");
-            Write($"PROTOCTL EAUTH={Config.ServerName}");
-            Write($"PROTOCTL SID={Config.ServerIdentifier}");
+            Write($"PASS {Config.UplinkPassword}", false);
+            Write("PROTOCTL NICKv2 VHP NICKIP UMODE2 SJOIN SJOIN2 SJ3 NOQUIT TKLEXT ESVID MLOCK", false);
+            Write($"PROTOCTL EAUTH={Config.ServerName}", false);
+            Write($"PROTOCTL SID={Config.ServerIdentifier}", false);
             Write($"SERVER {Config.ServerName} 1 :{Config.ServerDescription}");
-            Write($":{Config.ServerIdentifier} EOS");
+            Write($":{Config.ServerIdentifier} EOS", false);
             BridgeMain();
         }
 
@@ -234,6 +236,17 @@ namespace ToP.Bridge.Services
                 reader = new StreamReader(ns);
                 writer = new StreamWriter(ns);
             }
+        }
+
+        public async Task Disconnect()
+        {
+            await Task.Run(() =>
+            {
+                tcpClient?.Close();
+                reader?.Close();
+                writer?.Close();
+                tcpClient = null;
+            });
         }
 
     }

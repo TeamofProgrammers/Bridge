@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ToP.Bridge.Extensions;
-using ToP.Bridge.Extensions.Discord;
 using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Classes;
 using ToP.Bridge.Model.Config;
-using ToP.Bridge.Model.Events;
 using ToP.Bridge.Model.Events.Discord;
 using ToP.Bridge.Model.Events.Irc;
 
@@ -68,7 +64,6 @@ namespace ToP.Bridge.Services
                 _ = DiscordLink.SendMessage(Config.DiscordServer.GuildId, link.Discord, message.IrcToDiscordStrikeThrough().IrcToDiscordUnderline().IrcToDiscordItalics().IrcToDiscordBold());
             }
         }
-
         public void IrcPrivateMessage(object s, IrcMessageEventArgs e)
         {
             IrcLink.SendMessage(
@@ -102,9 +97,6 @@ namespace ToP.Bridge.Services
 
             return parsed.DiscordToIrcStrikeThrough().DiscordToIrcUnderline().DiscordToIrcBold().DiscordToIrcItalics();
         }
-
-        
-
         public void DiscordChannelMessage(object s, DiscordMessageEventArgs e)
         {
             var query = Config.DiscordServer.ChannelMapping.FirstOrDefault(x => x.Discord == e.Message.Channel.Id);
@@ -142,7 +134,6 @@ namespace ToP.Bridge.Services
                 }
             }
         }
-
         public void DiscordGuildConnected(object s, DiscordGuildConnectedEventArgs e)
         {
             if (e.Guild.Id == Config.DiscordServer.GuildId)
@@ -169,7 +160,6 @@ namespace ToP.Bridge.Services
                 }
             }
         }
-
         private void JoinDiscordUserToIrcChannel(SocketGuildUser user, Channel link)
         {
             UserLink thisLink;
@@ -191,7 +181,6 @@ namespace ToP.Bridge.Services
 
             IrcLink.JoinChannel(thisLink.IrcUserName, link.IRC);
         }
-
         private void PartDiscordUserFromIrcChannel(SocketGuildUser user, Channel link)
         {
             UserLink thisLink;
@@ -239,7 +228,7 @@ namespace ToP.Bridge.Services
                 JoinDiscordUserToIrcChannel(e.GuildUser, channel);
         }
 
-        public void DiscordUserLeave(object s, DiscordUserJoinLeaveEventArgs e)
+        public async void DiscordUserLeave(object s, DiscordUserJoinLeaveEventArgs e)
         {
             foreach (var channel in Config.DiscordServer.ChannelMapping)
                 PartDiscordUserFromIrcChannel(e.GuildUser, channel);
@@ -250,11 +239,6 @@ namespace ToP.Bridge.Services
             foreach (var channel in Config.DiscordServer.ChannelMapping)
                 await DiscordLink.SendMessage(Config.DiscordServer.GuildId, channel.Discord,
                     $"{DiscordMessageHelper.BoldControlCode}Bridge Down:{DiscordMessageHelper.BoldControlCode} Irc Connection Severed. Attempting to reconnect...");
-        }
-
-        public void UpdateIrcLink(IrcService ircLink)
-        {
-            this.IrcLink = ircLink;
         }
     }
 }
