@@ -26,4 +26,4 @@
 - [ ] Allow for channel names in config.xml, convert them to the uint variant in the ReadConfig function. 
 - [ ] Add SSL/TLS options for connection.
 - [X] Allow for Hostnames to be used in the ServerHost section. 
-- [ ] Remove the Scaffolding / Test GUI. (After Everything is working)
+- [X] Remove the Scaffolding / Test GUI. (After Everything is working)
