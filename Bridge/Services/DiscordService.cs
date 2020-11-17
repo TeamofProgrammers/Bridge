@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ToP.Bridge.Extensions.Discord;
 using ToP.Bridge.Model.Config;
-using ToP.Bridge.Model.Events;
 using ToP.Bridge.Model.Events.Discord;
 
 namespace ToP.Bridge.Services
@@ -33,20 +31,29 @@ namespace ToP.Bridge.Services
             _client.MessageReceived += MessageReceivedAsync;
             _client.GuildAvailable += GuildAvailableAsync;
             _client.GuildMemberUpdated += UserUpdatedAsync;
-            _client.ChannelUpdated += _client_ChannelUpdated;
+            _client.ChannelUpdated += ChannelUpdatedAsync;
             _client.UserLeft += UserLeftGuild;
             _client.UserJoined += UserJoinedGuild;
-            _client.LoggedOut += _client_LoggedOut;
+            _client.LoggedOut += LoggedOutAsync;
             this.Config = config;
         }
 
-        private async Task _client_LoggedOut()
+
+        public int UserCount
+        {
+            get
+            {
+                return UserChannels.SelectMany(x => x.Value.SelectMany(y=> y.Users.SelectMany(z=> z.Username))).Distinct().ToList().Count;
+            }
+        }
+
+        private async Task LoggedOutAsync()
         {
             await Task.Delay(5000);
             await MainAsync();
         }
 
-        private async Task _client_ChannelUpdated(SocketChannel previous, SocketChannel current)
+        private async Task ChannelUpdatedAsync(SocketChannel previous, SocketChannel current)
         {
             
         }
@@ -82,7 +89,7 @@ namespace ToP.Bridge.Services
                 if (args.NewChannels.Any() || args.RemovedChannels.Any())
                     AddUserChannels(currentUser);
 
-                EventLog($"{currentUser.Username} Status Updated");
+                EventLog($"{currentUser.Username} Status Updated: {currentUser.Status}");
             }
         }
 
@@ -139,6 +146,11 @@ namespace ToP.Bridge.Services
             await _client.StartAsync();
 
             await Task.Delay(-1);
+        }
+
+        public async Task Disconnect()
+        {
+            await _client.StopAsync();
         }
     }
 }
