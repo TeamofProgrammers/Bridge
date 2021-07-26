@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using static Crayon.Output;
 
 namespace ToP.Bridge.Arguments
 {
@@ -31,7 +32,12 @@ namespace ToP.Bridge.Arguments
                         await Task.Delay(5000);
                         await process?.InitializeBridge(initIrc: false);
                         break;
+                    case "help":
                     default:
+                        logger(Red(Bold("Syntax: restart <service>")));
+                        logger("Available options:");
+                        logger("\t\trestart discord");
+                        logger("\t\trestart irc");
                         break;
                 }
             }

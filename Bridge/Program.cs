@@ -52,7 +52,7 @@ namespace ToP.Bridge
 
         public static void Logger(string message)
         {
-            Console.WriteLine($"[{DateTime.Now}] {message}");
+            Console.WriteLine($@"[{DateTime.Now}] {message}");
         }
 
         static void MainProc(Object stateInfo)

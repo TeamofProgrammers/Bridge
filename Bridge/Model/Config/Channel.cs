@@ -10,5 +10,6 @@
         /// IRC ChannelName ie. #channel
         /// </summary>
         public string IRC { get; set; }
+        public bool StatusChannel { get; set; }
     }
 }
