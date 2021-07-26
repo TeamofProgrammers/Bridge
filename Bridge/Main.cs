@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ToP.Bridge.Helpers;
 using ToP.Bridge.Model.Config;
 using ToP.Bridge.Services;
+using static Crayon.Output;
 
 namespace ToP.Bridge
 {
@@ -45,6 +46,7 @@ namespace ToP.Bridge
                 IrcLink.OnChannelMessage += glue.IrcChannelMessage;
                 IrcLink.OnPrivateMessage += glue.IrcPrivateMessage;
                 IrcLink.OnServerDisconnect += glue.IrcServerDisconnect;
+                IrcLink.OnServerConnect += glue.IrcServerConnect;
             }
 
             // Start the Async Processing
@@ -54,8 +56,8 @@ namespace ToP.Bridge
                 IrcLink.StartBridge(); // Sort of Async.. Fix this later
         }
 
-        public string UserStatus => $"Users Connected: IRC({IrcLink.UserCount})  Discord({DiscordLink.UserCount})";
-        public string ChannelStatus => $"Channels Synced: {config.DiscordServer.ChannelMapping.Count}";
+        public string UserStatus => $"\n{Red("Users Connected:")}\n\t\tIRC({IrcLink.UserCount})\n\t\tDiscord({DiscordLink.UserCount})";
+        public string ChannelStatus => $"{Red("Channels Synced:")} { string.Join("",config.DiscordServer.ChannelMapping.Select(x=> $"\n\t\t{Blue(x.IRC)} <--> {Green(x.Discord.ToString())} - StatusChannel: {x.StatusChannel}").ToArray())}";
 
         public async Task Disconnect()
         {

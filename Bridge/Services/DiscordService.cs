@@ -21,6 +21,8 @@ namespace ToP.Bridge.Services
         public event EventHandler<DiscordUserJoinLeaveEventArgs> OnUserLeave;
         public event EventHandler<DiscordUserJoinLeaveEventArgs> OnUserJoin;
         public Dictionary<ulong, List<SocketChannel>> UserChannels { get; set; }
+
+        public List<SocketGuild> ActiveGuilds => _client?.Guilds.ToList();
         private DiscordLinkConfig Config;
         public DiscordService(Action<string> eventLog, DiscordLinkConfig config)
         {
@@ -102,8 +104,9 @@ namespace ToP.Bridge.Services
                 {
                     AddUserChannels(socketGuildUser);
                 }
-
+                
                 OnGuildConnected?.Invoke(this, new DiscordGuildConnectedEventArgs(guild));
+                await Cleanup(guild);
             }
         }
 
@@ -146,6 +149,23 @@ namespace ToP.Bridge.Services
             await _client.StartAsync();
 
             await Task.Delay(-1);
+        }
+
+        public async Task Cleanup(SocketGuild guild)
+        {
+            // Cleanup Disconnect Messages
+            foreach (var chanId in Config.ChannelMapping.Select(x => x.Discord))
+            {
+                var expireDate = DateTime.Today.AddDays(-13);
+                var chan = guild.TextChannels.FirstOrDefault(x => x.Id == chanId);
+                var messages = await _client.GetGuild(guild.Id).GetTextChannel(chanId).GetMessagesAsync(100).FlattenAsync();
+                // TODO: Standardize disconnect message so it can be referenced for identification
+                foreach (var deleteMessage in messages.Where(x => x.Content.Contains("Irc Connection Severed") && x.CreatedAt >= expireDate))
+                { 
+                    await chan.DeleteMessageAsync(deleteMessage);
+                    await Task.Delay(1000);
+                }
+            }
         }
 
         public async Task Disconnect()

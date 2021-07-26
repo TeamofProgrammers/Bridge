@@ -7,8 +7,8 @@ namespace ToP.Bridge.Arguments
     {
         public async Task Process(Main process, Action<string> logger, string input)
         {
-            logger(process?.UserStatus);
-            logger(process?.ChannelStatus);
+            logger($"{process?.UserStatus}\n{process?.ChannelStatus}");
+            
         }
     }
 }

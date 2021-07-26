@@ -341,3 +341,4 @@ ASALocalRun/
 healthchecksdb
 *.exe
 *.config
+Bridge/Config/*.xml

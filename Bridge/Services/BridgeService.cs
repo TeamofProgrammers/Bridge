@@ -18,6 +18,7 @@ namespace ToP.Bridge.Services
         private IrcService IrcLink { get; set; }
         private DiscordService DiscordLink { get; set; }
         private BridgeConfig Config { get; set; }
+        private bool IrcDisconnectAnnounced { get; set; }
 
         public BridgeService(IrcService ircLink, DiscordService discordLink, BridgeConfig config)
         {
@@ -183,10 +184,9 @@ namespace ToP.Bridge.Services
         }
         private void PartDiscordUserFromIrcChannel(SocketGuildUser user, Channel link)
         {
-            UserLink thisLink;
             if (UserLinks.ContainsKey(user.Username))
             {
-                thisLink = UserLinks[user.Username];
+                var thisLink = UserLinks[user.Username];
                 IrcLink.PartChannel(thisLink.IrcUserName, link.IRC);
                 UserLinks.Remove(user.Username);
             }
@@ -236,9 +236,19 @@ namespace ToP.Bridge.Services
 
         public async void IrcServerDisconnect(object sender, EventArgs e)
         {
-            foreach (var channel in Config.DiscordServer.ChannelMapping)
-                await DiscordLink.SendMessage(Config.DiscordServer.GuildId, channel.Discord,
-                    $"{DiscordMessageHelper.BoldControlCode}Bridge Down:{DiscordMessageHelper.BoldControlCode} Irc Connection Severed. Attempting to reconnect...");
+            if (!IrcDisconnectAnnounced)
+            {
+                foreach (var channel in Config.DiscordServer.ChannelMapping.Where(x=> x.StatusChannel))
+                    await DiscordLink.SendMessage(Config.DiscordServer.GuildId, channel.Discord,
+                        $"{DiscordMessageHelper.BoldControlCode}Bridge Down:{DiscordMessageHelper.BoldControlCode} Irc Connection Severed. Attempting to reconnect...");
+
+                IrcDisconnectAnnounced = true;
+            }
+        }
+
+        public void IrcServerConnect(object sender, EventArgs e)
+        {
+            IrcDisconnectAnnounced = true;
         }
     }
 }

@@ -26,6 +26,7 @@ namespace ToP.Bridge.Services
         public event EventHandler<IrcMessageEventArgs> OnChannelMessage;
         public event EventHandler<IrcMessageEventArgs> OnPrivateMessage;
         public event EventHandler<EventArgs> OnServerDisconnect;
+        public event EventHandler<EventArgs> OnServerConnect;
 
         public IrcService(Action<string> ircLog, IrcLinkConfig Config)
         {
@@ -187,6 +188,7 @@ namespace ToP.Bridge.Services
         private void BridgeMain()
         {
             var input = string.Empty;
+            OnServerConnect.Invoke(this, new EventArgs());
             try
             {
                 while ((input = reader.ReadLine()) != null)
